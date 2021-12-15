@@ -9,41 +9,76 @@
   <joint name="joint_wheel_left" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
-    <origin rpy="1.5708  0      0" xyz="-0.01949  0.06926  0.03808"/>
+    <origin rpy="1.5708  0      0" xyz="-0.0195  0.065  0.04"/>
     <axis xyz="0  0  1"/>
     <limit effort="1.0" lower="-1.79769e+308" upper="1.79769e+308" velocity="1.0"/>
   </joint>
   <joint name="base_link_JOINT_steer_fr" type="fixed">
     <parent link="base_link"/>
     <child link="picarx_steer_fr"/>
-    <origin rpy="0  0  0" xyz="0.137   -0.04999  0.029"/>
+    <origin rpy="0  0  0" xyz="0.139   -0.048  0.04"/>
   </joint>
+
+
+  <joint name="base_link_JOINT_steer_servo" type="fixed">
+    <parent link="base_link"/>
+    <child link="picarx_steer_servo"/>
+    <origin rpy="0  0  0" xyz="0.139   0.0  0.0485"/>
+  </joint>
+  <joint name="steer_servo_JOINT_steer_bar" type="prismatic">
+    <parent link="picarx_steer_servo"/>
+    <child link="picarx_steer_bar"/>
+    <origin rpy="0  0  0" xyz="0.02   0.0  0.0"/>
+    <axis xyz="0  1  0"/>
+    <limit effort="1.0" lower="-1.5708" upper="1.5708" velocity="1.0"/>
+  </joint>
+  <joint name="steer_bar_screw_right_JOINT_steer_bar" type="fixed">
+    <parent link="picarx_steer_bar"/>
+    <child link="picarx_steer_bar_screw_right"/>
+    <origin rpy="0  0  0" xyz="0.0   -0.0235 0.00"/>
+  </joint>
+  <joint name="steer_bar_screw_left_JOINT_steer_bar" type="fixed">
+    <parent link="picarx_steer_bar"/>
+    <child link="picarx_steer_bar_screw_left"/>
+    <origin rpy="0  0  0" xyz="0.0   0.0235  0.00"/>
+  </joint>
+  <joint name="picarx_steer_fr_JOINT_steer_bar_screw_right" type="fixed">
+    <parent link="picarx_steer_fr"/>
+    <child link="picarx_steer_bar_screw_right"/>
+  </joint>
+  <joint name="picarx_steer_fl_JOINT_steer_bar_screw_fl" type="fixed">
+    <parent link="picarx_steer_fl"/>
+    <child link="picarx_steer_bar_screw_left"/>
+  </joint>
+
+
   <joint name="joint_wheel_right" type="continuous">
     <parent link="base_link"/>
     <child link="left_wheel"/>
-    <origin rpy="1.5708  0      0" xyz="-0.0195  -0.06925  0.03808"/>
+    <origin rpy="1.5708  0      0" xyz="-0.0195  -0.065  0.04"/>
     <axis xyz="0 0 1"/>
     <limit effort="1.0" lower="-1.79769e+308" upper="1.79769e+308" velocity="1.0"/>
   </joint>
-  <joint name="picarx_steer_fr_JOINT_FrontRight" type="revolute">
+  <joint name="picarx_steer_fr_JOINT_FrontRight" type="continuous">
     <parent link="picarx_steer_fr"/>
     <child link="picarx_WheelFrontLeft"/>
-    <origin rpy="1.5708  0      0" xyz="0.00542 -0.01816  0.00908"/>
+    <origin rpy="1.5708  0      0" xyz="0.00542 -0.01816  -0.0025"/>
     <axis xyz="0  0  1"/>
     <limit effort="1.0" lower="-1.79769e+308" upper="1.79769e+308" velocity="1.0"/>
   </joint>
-  <joint name="picarx_steer_fl_JOINT_FrontLeft" type="revolute">
+  <joint name="picarx_steer_fl_JOINT_FrontLeft" type="continuous">
     <parent link="picarx_steer_fl"/>
     <child link="picarx_WheelFrontRight"/>
-    <origin rpy="1.5708  0      0" xyz="0.00542  0.01983  0.00908"/>
+    <origin rpy="1.5708  0      0" xyz="0.00542  0.01983  -0.0025"/>
     <axis xyz="0  0  1"/>
     <limit effort="1.0" lower="-1.79769e+308" upper="1.79769e+308" velocity="1.0"/>
   </joint>
   <joint name="base_link_JOINT_steer_fl" type="fixed">
     <parent link="base_link"/>
     <child link="picarx_steer_fl"/>
-    <origin rpy="0  0  0" xyz="0.137  0.049  0.029"/>
+    <origin rpy="0  0  0" xyz="0.139  0.048  0.04"/>
   </joint>
+
   <link name="base_link">
     <inertial>
       <mass value="1"/>
@@ -51,13 +86,13 @@
       <inertia ixx="0.166667" ixy="0" ixz="0" iyy="0.166667" iyz="0" izz="0.166667"/>
     </inertial>
     <collision name="picarx_collision">
-      <origin rpy="0  0  0" xyz="0     0     0.015"/>
+      <origin rpy="0  0  0" xyz="0     0     0.025"/>
       <geometry>
         <mesh filename="package://picarx_description/meshes/Chassis.dae" scale="1 1 1"/>
       </geometry>
     </collision>
     <visual name="picarx_visual">
-      <origin rpy="0  0  0" xyz="0     0     0.015"/>
+      <origin rpy="0  0  0" xyz="0     0     0.025"/>
       <geometry>
         <mesh filename="package://picarx_description/meshes/Chassis.dae" scale="1 1 1"/>
       </geometry>
@@ -139,6 +174,21 @@
       </geometry>
     </visual>
   </link>
+
+
+  <link name="picarx_steer_bar">
+    <inertial>
+      <mass value="1"/>
+      <origin rpy="0  0  0" xyz="0  0  0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <visual name="picarx_visual">
+      <origin rpy="0  0  0" xyz="0  0  0"/>
+      <geometry>
+        <box size="0.01 0.099 0.003"/>
+      </geometry>
+    </visual>
+  </link>
   <link name="picarx_steer_fl">
     <inertial>
       <mass value="1"/>
@@ -165,26 +215,78 @@
       </geometry>
     </visual>
   </link>
+  <link name="picarx_steer_servo">
+    <inertial>
+      <mass value="1"/>
+      <origin rpy="0  0  0" xyz="0  0  0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <visual name="picarx_visual">
+      <origin rpy="0  0  0" xyz="0  0  0"/>
+      <geometry>
+        <cylinder length="0.005" radius="0.005"/>
+      </geometry>
+    </visual>
+  </link>
+
+    <link name="picarx_steer_bar_screw_left">
+    <inertial>
+      <mass value="1"/>
+      <origin rpy="0  0  0" xyz="0  0  0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <visual name="picarx_visual">
+      <origin rpy="0  0  0" xyz="0  0  0"/>
+      <geometry>
+        <cylinder length="0.005" radius="0.005"/>
+      </geometry>
+    </visual>
+  </link>
+    <link name="picarx_steer_bar_screw_right">
+    <inertial>
+      <mass value="1"/>
+      <origin rpy="0  0  0" xyz="0  0  0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <visual name="picarx_visual">
+      <origin rpy="0  0  0" xyz="0  0  0"/>
+      <geometry>
+        <cylinder length="0.005" radius="0.005"/>
+      </geometry>
+    </visual>
+  </link>
+
 
   <transmission name="trans_right_wheel">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint_wheel_right">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_right_wheel">
+    <actuator name="motor_right">
       <mechanicalReduction>1</mechanicalReduction>
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </actuator>
   </transmission>
 
   <transmission name="trans_left_wheel">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint_wheel_left">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_left_wheel">
+    <actuator name="motor_left">
       <mechanicalReduction>1</mechanicalReduction>
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+
+  <transmission name="trans_steering_servo">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="steer_servo_JOINT_steer_bar">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="steering_servo">
+      <mechanicalReduction>1</mechanicalReduction>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </actuator>
   </transmission>
 
