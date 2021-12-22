@@ -1,0 +1,5 @@
+# DIRECTION
+int8 FORWARD = 0
+int8 BACKWARD = 1
+
+int16 speed

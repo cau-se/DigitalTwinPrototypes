@@ -15,39 +15,6 @@
     <self_collide>true</self_collide>
   </gazebo>
   <link name="world"/>
-  <!--<joint name="chassis_JOINT_steer_servo" type="fixed">
-    <parent link="chassis"/>
-    <child link="picarx_steer_servo"/>
-    <origin rpy="0  0  0" xyz="0.139   0.0  0.0485"/>
-  </joint>-->
-
-  <!--<joint name="steer_servo_JOINT_steer_bar" type="prismatic">
-    <parent link="picarx_steer_servo"/>
-    <child link="picarx_steer_bar"/>
-    <origin rpy="0  0  0" xyz="0.02   0.0  0.0"/>
-    <axis xyz="0  1  0"/>
-    <limit effort="1.0" lower="-1.5708" upper="1.5708" velocity="1.0"/>
-  </joint>-->
-  <!--<joint name="steer_servo_JOINT_steer_bar" type="revolute">
-    <parent link="chassis"/>
-    <child link="picarx_steer_bar"/>
-    <origin rpy="0  0  0" xyz="0.156   0.0  0.0485"/>
-    <axis xyz="0  0  1"/>
-    <limit effort="1.0" lower="-1.5708" upper="1.5708" velocity="1.0"/>
-  </joint>-->
-  <!--<link name="picarx_steer_servo">
-    <inertial>
-      <mass value="1"/>
-      <origin rpy="0  0  0" xyz="0  0  0"/>
-      <inertia ixx="0.166667" ixy="0" ixz="0" iyy="0.166667" iyz="0" izz="0.166667"/>
-    </inertial>
-    <visual name="picarx_visual">
-      <origin rpy="0  0  0" xyz="0  0  0"/>
-      <geometry>
-        <cylinder length="0.005" radius="0.005"/>
-      </geometry>
-    </visual>
-  </link>-->
 
   <link name="chassis">
     <inertial>
@@ -97,7 +64,7 @@
   <joint name="joint_wheel_right" type="continuous">
     <parent link="chassis"/>
     <child link="right_wheel"/>
-    <origin rpy="1.5708 0      0" xyz="0.0   -0.063  0.04"/>
+    <origin rpy="1.5708 0      0" xyz="0.0   -0.063  0.0375"/>
     <axis xyz="0 0 1"/>
   </joint>
 
@@ -124,15 +91,15 @@
   <joint name="joint_wheel_left" type="continuous">
     <parent link="chassis"/>
     <child link="left_wheel"/>
-    <origin rpy="1.5708  0 0" xyz="0.0   0.063  0.04"/>
+    <origin rpy="1.5708  0 0" xyz="0.0   0.063  0.0375"/>
     <axis xyz="0  0  1"/>
   </joint>
 
 
 
-  <!--<link name="picarx_WheelFrontLeft">
+  <link name="picarx_WheelFrontLeft">
     <inertial>
-      <mass value=""/>
+      <mass value="1"/>
       <origin rpy="-1.5708  0  0" xyz="0 0 0"/>
       <inertia ixx="0.166667" ixy="0" ixz="0" iyy="0.166667" iyz="0" izz="0.166667"/>
     </inertial>
@@ -152,24 +119,24 @@
   <joint name="front_left_wheel" type="continuous">
     <parent link="picarx_steer_fl"/>
     <child link="picarx_WheelFrontLeft"/>
-    <origin rpy="0 0 0" xyz="0.01   0.025  0.005"/>
+    <origin rpy="0 0 0" xyz="0.0 0.015 -0.0025"/>
     <axis xyz="0  0  1"/>
-  </joint>-->
+  </joint>
 
   <link name="picarx_steer_fl">
     <inertial>
       <mass value="1"/>
-      <origin rpy="0  0  0" xyz="0.01 0.005 0"/>
+      <origin rpy="0  0  0" xyz="0 0 0"/>
       <inertia ixx="0.166667" ixy="0" ixz="0" iyy="0.166667" iyz="0" izz="0.166667"/>
     </inertial>
     <visual>
-      <origin rpy="0  0  0" xyz="0.01 0.005 0"/>
+      <origin rpy="0  0  0" xyz="0 0 0"/>
       <geometry>
         <box size="0.02 0.01 0.024"/>
       </geometry>
     </visual>
     <collision>
-      <origin rpy="0  0  0" xyz="0.01 0.005 0"/>
+      <origin rpy="0  0  0" xyz="0 0 0"/>
       <geometry>
         <box size="0.02 0.01 0.024"/>
       </geometry>
@@ -178,38 +145,11 @@
   <joint name="steer_left" type="continuous">
     <parent link="chassis"/>
     <child link="picarx_steer_fl"/>
-    <origin rpy="0  0  0" xyz="0.13   0.043  0.0395"/>
+    <origin rpy="0  0  0" xyz="0.135   0.048  0.04"/>
     <axis xyz="0 0 1" />
   </joint>
 
-  <link name="picarx_steer_bar_l">
-    <inertial>
-      <mass value="1"/>
-      <origin rpy="0  0  0" xyz="0.005   -0.0215 0"/>
-      <inertia ixx="0.166667" ixy="0" ixz="0" iyy="0.166667" iyz="0" izz="0.166667"/>
-    </inertial>
-    <visual>
-      <origin rpy="0  0  0" xyz="0.005   -0.0215 0"/>
-      <geometry>
-        <box size="0.01 0.043 0.003"/>
-      </geometry>
-    </visual>
-    <collision>
-      <origin rpy="0  0  0" xyz="0.005   -0.0215 0"/>
-      <!--<origin rpy="0  0  0" xyz="0.005   -0.0214999995 0"/>-->
-      <geometry>
-        <box size="0.01 0.043 0.003"/>
-      </geometry>
-    </collision>
-  </link>
-  <joint name="steerbar_left" type="continuous" >
-      <axis xyz="0 0 1" />
-      <parent link="picarx_steer_fl" />
-      <child link="picarx_steer_bar_l" />
-      <origin rpy="0 0 0" xyz="0.01999999  0  0"/>
-  </joint>
-
-  <!--<link name="picarx_WheelFrontRight">
+  <link name="picarx_WheelFrontRight">
     <inertial>
       <mass value="1"/>
       <origin rpy="-1.5708  0  0" xyz="0 0 0"/>
@@ -231,24 +171,24 @@
   <joint name="front_right_wheel" type="continuous">
     <parent link="picarx_steer_fr"/>
     <child link="picarx_WheelFrontRight"/>
-    <origin rpy="0 0 0" xyz="0.01 -0.025 0.005"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.015 -0.0025"/>
     <axis xyz="0  0  1"/>
-  </joint>-->
+  </joint>
 
   <link name="picarx_steer_fr">
     <inertial>
       <mass value="1"/>
-      <origin rpy="0  0  0" xyz="0.01 -0.05 0"/>
+      <origin rpy="0  0  0" xyz="0 0 0"/>
       <inertia ixx="0.166667" ixy="0" ixz="0" iyy="0.166667" iyz="0" izz="0.166667"/>
     </inertial>
     <visual>
-      <origin rpy="0  0  0" xyz="0.01 -0.005 0"/>
+      <origin rpy="0  0  0" xyz="0 0 0"/>
       <geometry>
         <box size="0.02 0.01 0.024"/>
       </geometry>
     </visual>
     <collision>
-      <origin rpy="0  0  0" xyz="0.01 -0.005 0"/>
+      <origin rpy="0  0  0" xyz="0 0 0"/>
       <geometry>
         <box size="0.02 0.01 0.024"/>
       </geometry>
@@ -257,43 +197,9 @@
   <joint name="steer_right" type="continuous">
     <parent link="chassis"/>
     <child link="picarx_steer_fr"/>
-    <origin rpy="0  0  0" xyz="0.13   -0.043  0.0395"/>
+    <origin rpy="0  0  0" xyz="0.135   -0.048  0.04"/>
     <axis xyz="0 0 1" />
   </joint>
-
-  <link name="picarx_steer_bar_r">
-    <inertial>
-      <mass value="1"/>
-      <origin rpy="0  0  0" xyz="0.005   0.0215  0"/>
-      <inertia ixx="0.166667" ixy="0" ixz="0" iyy="0.166667" iyz="0" izz="0.166667"/>
-    </inertial>
-    <visual>
-      <origin rpy="0  0  0" xyz="0.005   0.0215 0"/>
-      <geometry>
-        <box size="0.01 0.043 0.003"/>
-      </geometry>
-    </visual>
-    <collision>
-      <origin rpy="0  0  0" xyz="0.005   0.0215 0"/>
-      <geometry>
-        <box size="0.01 0.043 0.003"/>
-      </geometry>
-    </collision>
-  </link>
-  <joint name="steerbar_right" type="continuous" >
-      <axis xyz="0 0 1" />
-      <parent link="picarx_steer_fr" />
-      <child link="picarx_steer_bar_r" />
-      <origin rpy="0.0 0 0" xyz="0.01999999   0  0" />
-  </joint>
-
-  <gazebo>
-      <joint name="ackermann_bar_loop_joint_right" type="fixed">
-        <pose>0.005 -0.0431 0 0 0 0</pose>
-        <parent>picarx_steer_bar_r</parent>
-        <child>picarx_steer_bar_l</child>
-      </joint>
-  </gazebo>
 
  <transmission name="trans_right_wheel">
     <type>transmission_interface/SimpleTransmission</type>
@@ -317,9 +223,9 @@
     </actuator>
   </transmission>
 
-  <transmission name="trans_steering_servo_l">
+  <transmission name="trans_steer_left">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="steerbar_left">
+    <joint name="steer_left">
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="steering_servo_l">
@@ -328,9 +234,9 @@
     </actuator>
   </transmission>
 
-  <transmission name="trans_steering_servo_r">
+  <transmission name="trans_steer_right">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="steerbar_right">
+    <joint name="steer_right">
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="steering_servo_r">

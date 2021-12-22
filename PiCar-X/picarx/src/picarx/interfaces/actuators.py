@@ -89,7 +89,7 @@ class DCMotorInterface(metaclass=ABCMeta):
     @abstractmethod
     def stop(self): raise NotImplementedError("Subclasses should implement this!")
 
-class ServoInterface(metaclass=ABCMeta):    
+class ClutchGearInterface(metaclass=ABCMeta):    
     @abstractmethod
     def __init__(self, pwm_pin): raise NotImplementedError("Subclasses should implement this!")
 
