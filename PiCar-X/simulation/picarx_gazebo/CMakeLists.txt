@@ -6,28 +6,11 @@ cmake_policy(SET CMP0054 NEW)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  std_msgs
-  sensor_msgs
-  geometry_msgs
-  nav_msgs
-  tf
-  gazebo_ros
-  controller_manager
-  joint_state_controller
-  robot_state_publisher
-  effort_controllers
-)
+find_package(catkin REQUIRED)
 
 find_package(gazebo REQUIRED)
 
-catkin_package(
-# include
-  CATKIN_DEPENDS roscpp rospy std_msgs sensor_msgs geometry_msgs nav_msgs tf gazebo_ros
-  DEPENDS GAZEBO
-)
+catkin_package()
 
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
@@ -38,6 +21,6 @@ include_directories(
 )
 
 
-install(DIRECTORY launch models worlds 
+install(DIRECTORY launch worlds 
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

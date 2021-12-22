@@ -14,9 +14,9 @@
 
 from typing import Union
 from picarx.pwm import PWM, SunFounderPWMValues
-from picarx.interfaces.actuators import ServoInterface, SunFounderClutchGear
+from picarx.interfaces.actuators import ClutchGearInterface, SunFounderClutchGear
 
-class Servo(ServoInterface):    
+class Servo(ClutchGearInterface):    
     def __init__(self, pwm_pin):
         self.pwm = pwm_pin
         self.angle = 90
