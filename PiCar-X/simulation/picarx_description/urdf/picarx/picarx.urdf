@@ -142,11 +142,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="steer_left" type="continuous">
+  <joint name="steer_left" type="revolute">
     <parent link="chassis"/>
     <child link="picarx_steer_fl"/>
-    <origin rpy="0  0  0" xyz="0.135   0.048  0.04"/>
+    <origin rpy="0  0  0" xyz="0.14   0.048  0.04"/>
     <axis xyz="0 0 1" />
+    <limit effort="10" lower="-0.698" upper="0.698" velocity="1" />
   </joint>
 
   <link name="picarx_WheelFrontRight">
@@ -194,11 +195,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="steer_right" type="continuous">
+  <joint name="steer_right" type="revolute">
     <parent link="chassis"/>
     <child link="picarx_steer_fr"/>
-    <origin rpy="0  0  0" xyz="0.135   -0.048  0.04"/>
+    <origin rpy="0  0  0" xyz="0.14   -0.048  0.04"/>
     <axis xyz="0 0 1" />
+    <limit effort="10" lower="-0.698" upper="0.698" velocity="1" />
   </joint>
 
  <transmission name="trans_right_wheel">
