@@ -1,0 +1,30 @@
+<launch>
+    <arg name="motor1_name" value="motor_left" />
+    <arg name="motor1_direction_pin" value="24" />
+    <arg name="motor1_pwm_pin" value="P12"/>
+    <arg name="motor1_i2c_port" value="/dev/i2c-0" />
+    <arg name="motor1_motor_side" value="0" />
+
+    <arg name="motor2_name" value="motor_right"/>
+    <arg name="motor2_direction_pin" value="23" />
+    <arg name="motor2_pwm_pin" value="P13"/>
+    <arg name="motor2_i2c_port" value="/dev/i2c-0"/>
+    <arg name="motor2_motor_side" value="1" />
+
+   <include file="$(find picarx_dcmotor_driver)/launch/dcmotor_driver.launch">
+        <arg  name="name" value="$(arg motor1_name)" />
+        <arg  name="direction_pin" value="$(arg motor1_direction_pin)" />
+        <arg  name="pwm_pin" value="$(arg motor1_pwm_pin)"/>
+        <arg  name="i2c_port" value="$(arg motor1_i2c_port)"/>
+        <arg  name="motor_side" value="$(arg motor1_motor_side)"/>
+   </include>
+  
+   <include file="$(find picarx_dcmotor_driver)/launch/dcmotor_driver.launch">
+        <arg  name="name" value="$(arg motor2_name)" />
+        <arg  name="direction_pin" value="$(arg motor2_direction_pin)" />
+        <arg  name="pwm_pin" value="$(arg motor2_pwm_pin)"/>
+        <arg  name="i2c_port" value="$(arg motor2_i2c_port)"/>
+        <arg  name="motor_side" value="$(arg motor2_motor_side)"/>
+   </include>
+
+</launch>
