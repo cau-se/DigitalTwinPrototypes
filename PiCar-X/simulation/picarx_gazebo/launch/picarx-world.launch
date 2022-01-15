@@ -17,6 +17,6 @@
     </include>
     
     <param name="robot_description" command="xacro '$(find picarx_description)/urdf/picarx/picarx.urdf'" />
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-param robot_description -urdf -model picarx" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-param robot_description -urdf -model picarx -x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" />
   
 </launch>
