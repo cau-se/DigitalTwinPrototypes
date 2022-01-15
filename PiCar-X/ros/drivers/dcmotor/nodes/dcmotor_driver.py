@@ -49,11 +49,10 @@ class DCMotorDriver(AbstractDCMotorDriver):
 
     def drive(self, ros_msg):
         speed = int(ros_msg.data)
-        direction = TravelDirection.FORWARD if speed >= 0 else TravelDirection.BACKWARD
+        direction = TravelDirection.FORWARD if speed >= 0 and self.motor_side is MotorSide.LEFT else TravelDirection.BACKWARD
 
-        if not self.direction == direction:
-            self.direction = direction
-
+        self.direction = direction
+        rospy.logerr("Direction: {}".format(direction))
         self.speed = abs(speed)
 
     def start(self):

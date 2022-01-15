@@ -72,7 +72,7 @@ class AbstractMotorEmulator(metaclass=ABCMeta):
         if direction is None:
             self.__direction = None
         else:
-            self.__direction = direction
+            #self.__direction = direction
             if direction.value != self.motor_side.value:
                 self.__direction = -1
             else:

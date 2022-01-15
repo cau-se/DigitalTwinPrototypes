@@ -12,6 +12,7 @@ add_message_files(
 	DIRECTORY msg
     FILES
     DCMotor.msg
+    Test.msg
 )
 
 

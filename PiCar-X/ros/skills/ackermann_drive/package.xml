@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ackermann_drive</name>
+  <name>picarx_ackermann_drive</name>
   <version>0.0.0</version>
-  <description>The ackermann_drive helps to steer a PiCar-X. It connects to two motors and </description>
+  <description>The picarx_ackermann_drive package helps to steer a PiCar-X. It connects to two motors and the servo motor that does the Ackermann steering</description>
 
   <maintainer email="abarbie@geomar.de">Alexander Barbie</maintainer>
 

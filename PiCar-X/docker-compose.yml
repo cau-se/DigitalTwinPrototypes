@@ -80,6 +80,23 @@ services:
     depends_on:
       - picarx
 
+  ackermann_skill:
+    build: ./ros/skills/ackermann_drive
+    image: picarx/skills/picarx_ackermann_drive:latest
+    env_file:
+      - ./core/dtp/env/picarx.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
+    command: /bin/bash -c "/root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} --
+      roslaunch picarx_ackermann_drive ackermann_skill.launch"
+    depends_on:
+      - picarx
+
   motor_emulator_left:
     build: ./ros/emulators/dcmotor
     image: picarx/emulators/dcmotor:latest

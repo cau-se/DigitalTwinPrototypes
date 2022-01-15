@@ -16,8 +16,6 @@ picarx:
  steer_left_controller:
    type: position_controllers/JointPositionController
    joint: steer_left
-   pid: {p: 100.0, i: 0.01, d: 10.0}
  steer_right_controller:
    type: position_controllers/JointPositionController
    joint: steer_right
-   pid: {p: 100.0, i: 0.01, d: 10.0}
