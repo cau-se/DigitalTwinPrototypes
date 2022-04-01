@@ -28,7 +28,7 @@ services:
     volumes:
       - ./core:/root/catkin_ws/src/core
       - ./simulation:/root/catkin_ws/src/simulation
-    command: /bin/bash -c "roslaunch picarx_gazebo picarx-world.launch & /root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_control picarx_control.launch"
+    command: /bin/bash -c "roslaunch picarx_gazebo picarx-world.launch & /root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_control picarx_control.launch"
 
   motor_left:
     build: ./ros/drivers/dcmotor
@@ -42,7 +42,7 @@ services:
       - /dev/i2c-0:/dev/i2c-0
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
-    command: /bin/bash -c "/root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} --
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
       roslaunch picarx_dcmotor_driver dcmotor_left.launch"
     depends_on:
       - picarx
@@ -58,7 +58,7 @@ services:
       - /dev/i2c-0:/dev/i2c-0
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
-    command: /bin/bash -c "/root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} --
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
       roslaunch picarx_dcmotor_driver dcmotor_right.launch"
     depends_on:
       - picarx
@@ -75,7 +75,7 @@ services:
       - /dev/i2c-0:/dev/i2c-0
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/clutchgear:/root/catkin_ws/src/drivers/clutchgear
-    command: /bin/bash -c "/root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} --
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
       roslaunch picarx_clutchgear_driver ackermann_clutchgear_driver.launch"
     depends_on:
       - picarx
@@ -92,7 +92,7 @@ services:
       - /dev/i2c-0:/dev/i2c-0
       - ./core:/root/catkin_ws/src/core
       - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
-    command: /bin/bash -c "/root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} --
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- 
       roslaunch picarx_ackermann_drive ackermann_skill.launch"
     depends_on:
       - picarx
@@ -109,7 +109,7 @@ services:
       - /dev/i2c-0:/dev/i2c-0
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/dcmotor:/root/catkin_ws/src/emulators/dcmotor
-    command: /bin/bash -c "/root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} --
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
       roslaunch picarx_dcmotor_emulator dcmotor_emulator_left.launch"
     depends_on:
       - picarx
@@ -125,7 +125,7 @@ services:
       - /dev/i2c-0:/dev/i2c-0
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/dcmotor:/root/catkin_ws/src/emulators/dcmotor
-    command: /bin/bash -c "/root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} --
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
       roslaunch picarx_dcmotor_emulator dcmotor_emulator_right.launch"
     depends_on:
       - picarx
@@ -142,7 +142,7 @@ services:
       - /dev/i2c-0:/dev/i2c-0
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/clutchgear:/root/catkin_ws/src/emulators/clutchgear
-    command: /bin/bash -c "/root/catkin_ws/src/core/wait-for-it/wait-for-it.sh $${ROS_MASTER_URI} --
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
       roslaunch picarx_clutchgear_emulator ackermann_clutchgear_emulator.launch"
     depends_on:
       - picarx
