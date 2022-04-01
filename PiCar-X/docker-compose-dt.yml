@@ -29,7 +29,7 @@ services:
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
-    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- catkin build && roslaunch arches_core digitalshadow_dt.launch"
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_core digitalshadow_dt.launch"
     networks:
       - picarx
 
@@ -38,7 +38,7 @@ services:
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
-    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- catkin build && roslaunch arches_mqtt_bridge dt_client.launch host:=mqtt-server"
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_mqtt_bridge dt_client.launch host:=mqtt-server"
     networks:
       - picarx
 
