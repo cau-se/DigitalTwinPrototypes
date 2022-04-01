@@ -10,6 +10,8 @@ services:
     ports:
       - 11311:11311
     command: roscore
+    networks:
+      - picarx
 
   picarx-gazebo:
     build:
@@ -29,8 +31,28 @@ services:
       - ./core:/root/catkin_ws/src/core
       - ./simulation:/root/catkin_ws/src/simulation
     command: /bin/bash -c "roslaunch picarx_gazebo picarx-world.launch & /root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_control picarx_control.launch"
+    networks:
+      - picarx
 
-  motor_left:
+  shadow-dtp:
+    image: picarx/core:latest
+    env_file:
+      - ./core/dtp/env/picarx.env
+    tty: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- catkin build && roslaunch arches_core digitalshadow_pt.launch"
+    networks:
+      - picarx
+
+  mqtt-dtp:
+    image: git.geomar.de:11411/open-source/arches/arches_mqtt_bridge:latest
+    env_file:
+      - ./core/dtp/env/picarx.env
+    tty: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- catkin build && roslaunch arches_mqtt_bridge pt_client.launch host:=mqtt-server"
+    networks:
+      - picarx
+
+  motor_left-dtp:
     build: ./ros/drivers/dcmotor
     image: picarx/drivers/dcmotor:latest
     env_file:
@@ -46,8 +68,10 @@ services:
       roslaunch picarx_dcmotor_driver dcmotor_left.launch"
     depends_on:
       - picarx
+    networks:
+      - picarx
 
-  motor_right:
+  motor_right-dtp:
     image: picarx/drivers/dcmotor:latest
     tty: true
     env_file:
@@ -62,8 +86,10 @@ services:
       roslaunch picarx_dcmotor_driver dcmotor_right.launch"
     depends_on:
       - picarx
+    networks:
+      - picarx
 
-  steering:
+  steering-dtp:
     build: ./ros/drivers/clutchgear
     image: picarx/emulators/picarx_clutchgear_driver:latest
     env_file:
@@ -79,8 +105,10 @@ services:
       roslaunch picarx_clutchgear_driver ackermann_clutchgear_driver.launch"
     depends_on:
       - picarx
+    networks:
+      - picarx
 
-  ackermann_skill:
+  ackermann_skill-dtp:
     build: ./ros/skills/ackermann_drive
     image: picarx/skills/picarx_ackermann_drive:latest
     env_file:
@@ -96,8 +124,10 @@ services:
       roslaunch picarx_ackermann_drive ackermann_skill.launch"
     depends_on:
       - picarx
+    networks:
+      - picarx
 
-  motor_emulator_left:
+  motor_emulator_left-dtp:
     build: ./ros/emulators/dcmotor
     image: picarx/emulators/dcmotor:latest
     env_file:
@@ -113,8 +143,10 @@ services:
       roslaunch picarx_dcmotor_emulator dcmotor_emulator_left.launch"
     depends_on:
       - picarx
+    networks:
+      - picarx
 
-  motor_emulator_right:
+  motor_emulator_right-dtp:
     image: picarx/emulators/dcmotor:latest
     env_file:
       - ./core/dtp/env/simulation.env
@@ -129,8 +161,10 @@ services:
       roslaunch picarx_dcmotor_emulator dcmotor_emulator_right.launch"
     depends_on:
       - picarx
+    networks:
+      - picarx
 
-  steering_emulator:
+  steering_emulator-dtp:
     build: ./ros/emulators/clutchgear
     image: picarx/emulators/picarx_clutchgear_emulator:latest
     env_file:
@@ -146,3 +180,9 @@ services:
       roslaunch picarx_clutchgear_emulator ackermann_clutchgear_emulator.launch"
     depends_on:
       - picarx
+    networks:
+      - picarx
+
+networks:
+  picarx:
+    external: true
