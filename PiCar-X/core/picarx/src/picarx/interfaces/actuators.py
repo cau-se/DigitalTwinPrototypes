@@ -17,8 +17,8 @@ from enum import Enum
 from typing import Union
 
 class TravelDirection(Enum):
-    FORWARD = 0
-    BACKWARD = 1
+    FORWARD = 1
+    BACKWARD = 0
 
 class MotorSide(Enum):
     LEFT = 0
@@ -32,14 +32,6 @@ class SunFounderClutchGear(Enum):
     MINIMUM_PULSE = 500 # 0.5ms
     MAXIMUM_PULSE = 2500 # 2.5ms
     SUNFOUNDER_RANDOM_DIVIDER = 20000
-
-class TravelDirection(Enum):
-    FORWARD = 0
-    BACKWARD = 1
-
-class MotorSide(Enum):
-    LEFT = 0
-    RIGHT = 1
 
 class DCMotorInterface(metaclass=ABCMeta):
 

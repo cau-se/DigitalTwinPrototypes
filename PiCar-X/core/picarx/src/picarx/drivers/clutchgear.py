@@ -52,10 +52,10 @@ class AbstractClutchGearDriver(ClutchGearInterface):
         pulse_width = round(angle / 180 * (SunFounderClutchGear.MAXIMUM_PULSE.value - SunFounderClutchGear.MINIMUM_PULSE.value) + SunFounderClutchGear.MINIMUM_PULSE.value)
         # I don't know why it works, but I haven't found another way
         pulse_width = pulse_width / SunFounderClutchGear.SUNFOUNDER_RANDOM_DIVIDER.value * self.pwm_pin.period
-        return round(pulse_width)
+        return round(pulse_width / 2)
 
     def pulse_width_to_angle(self, pulse_width):
-        pulse_width = round(pulse_width * SunFounderClutchGear.SUNFOUNDER_RANDOM_DIVIDER.value / self.pwm_pin.period)
+        pulse_width = round(pulse_width * 2 * SunFounderClutchGear.SUNFOUNDER_RANDOM_DIVIDER.value / self.pwm_pin.period)
         angle = (pulse_width - SunFounderClutchGear.MINIMUM_PULSE.value) * 180 / (SunFounderClutchGear.MAXIMUM_PULSE.value - SunFounderClutchGear.MINIMUM_PULSE.value)
         return round(angle)
 

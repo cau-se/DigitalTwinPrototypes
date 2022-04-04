@@ -71,6 +71,7 @@ class DCMotorEmulator(AbstractMotorEmulator):
     def drive_with_speed(self, i2c_value: int):
         percentage = int((i2c_value/4095) * 100)
         velocity = 6 * percentage/100
+        rospy.logerr("MOTORSIDE: {} and direction: {}".format(self.motor_side, self.direction))
         self.controller_publisher.publish(Float64(self.direction * velocity))
 
     def start(self):

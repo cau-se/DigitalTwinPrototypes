@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from picarx.interfaces.actuators import TravelDirection, MotorSide
-from picarx.drivers.servo import Servo
+from picarx.drivers.clutchgear import Servo
 from picarx.drivers.dc_motor import DCMotor
 import time 
 
