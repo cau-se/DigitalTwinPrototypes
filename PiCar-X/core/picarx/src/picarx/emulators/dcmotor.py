@@ -75,7 +75,10 @@ class AbstractMotorEmulator(metaclass=ABCMeta):
         if direction is None:
             self.__direction = None
         else:
-            self.__direction = 1 if direction.value == 1 else -1
+            if direction.value != self.motor_side.value:
+                self.__direction = 1 # forward
+            else:
+                self.__direction = -1 # backward
 
     @property
     def speed(self):

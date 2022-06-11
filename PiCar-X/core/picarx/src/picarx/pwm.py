@@ -132,5 +132,4 @@ class PWM(I2C):
         if 0 <= percent <= 100:
             percent = percent / 100.0
             self.__duty_cycle = percent
-            print("PULSE_WIDTH is: {}".format(percent * self.period))
             self.pulse_width(int(percent * self.period))
