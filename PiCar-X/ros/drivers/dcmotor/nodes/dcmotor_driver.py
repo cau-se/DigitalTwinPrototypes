@@ -55,7 +55,7 @@ class DCMotorDriver(AbstractDCMotorDriver):
     def start(self):
         rospy.init_node(self.name, anonymous=False)
         rospy.on_shutdown(self.stop)
-        speed_subscriber = rospy.Subscriber('{}/speed'.format(self.name), Int8, self.drive)
+        rospy.Subscriber('{}/speed'.format(self.name), Int8, self.drive)
         
         rospy.spin()
 
