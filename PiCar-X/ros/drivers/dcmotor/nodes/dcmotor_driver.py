@@ -49,16 +49,13 @@ class DCMotorDriver(AbstractDCMotorDriver):
 
     def drive(self, ros_msg):
         speed = int(ros_msg.data)
-        direction = TravelDirection.FORWARD if speed >= 0 and self.motor_side is MotorSide.LEFT else TravelDirection.BACKWARD
-
-        self.direction = direction
-        rospy.logerr("Direction: {}".format(direction))
+        self.direction = TravelDirection.FORWARD if speed >= 0 else TravelDirection.BACKWARD
         self.speed = abs(speed)
 
     def start(self):
         rospy.init_node(self.name, anonymous=False)
         rospy.on_shutdown(self.stop)
-        speed_subscriber = rospy.Subscriber('{}/speed'.format(self.name), Int8, self.drive)
+        rospy.Subscriber('{}/speed'.format(self.name), Int8, self.drive)
         
         rospy.spin()
 

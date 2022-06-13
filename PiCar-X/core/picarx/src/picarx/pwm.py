@@ -20,8 +20,8 @@ class SunFounderPWMValues(Enum):
     DEFAULT_CLOCK = 72000000
     DEFAULT_PERIOD = 4095
     DEFAULT_PRESCALER = 8
-    DEFAULT_I2C_ADRESS = 0x14
-    REGISTER_CHANNEL = 0x20
+    DEFAULT_I2C_ADRESS = 0x14 # int int: 20
+    REGISTER_CHANNEL = 0x20 # in int: 32
     REGISTER_FREQUENCY = 0x30
     REGISTER_PRESCALER = 0x40
     REGISTER_ARR = 0x44
@@ -132,5 +132,4 @@ class PWM(I2C):
         if 0 <= percent <= 100:
             percent = percent / 100.0
             self.__duty_cycle = percent
-            print("PULSE_WIDTH is: {}".format(percent * self.period))
             self.pulse_width(int(percent * self.period))

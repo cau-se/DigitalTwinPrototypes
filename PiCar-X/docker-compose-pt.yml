@@ -1,0 +1,102 @@
+version: '3'    
+
+services:
+  picarx:
+    build: .
+    image: picarx/core:latest
+    environment:
+      - ROS_HOSTNAME=picarx
+    tty: true
+    ports:
+      - 11311:11311
+    command: roscore
+    networks:
+      - picarx
+
+  shadow-pt:
+    image: picarx/core:latest
+    env_file:
+      - ./core/dtp/env/picarx.env
+    tty: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_core digitalshadow_pt.launch"
+    networks:
+      - picarx
+
+  motor_left-pt:
+    build: ./ros/drivers/dcmotor
+    image: picarx/drivers/dcmotor:latest
+    env_file:
+      - ./core/dtp/env/picarx.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
+      roslaunch picarx_dcmotor_driver dcmotor_left.launch i2c_port:=/dev/i2c-1"
+    depends_on:
+      - picarx
+    networks:
+      - picarx
+
+  motor_right-pt:
+    image: picarx/drivers/dcmotor:latest
+    tty: true
+    env_file:
+      - ./core/dtp/env/picarx.env
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
+      roslaunch picarx_dcmotor_driver dcmotor_right.launch i2c_port:=/dev/i2c-1"
+    depends_on:
+      - picarx
+    networks:
+      - picarx
+
+  steering-pt:
+    build: ./ros/drivers/clutchgear
+    image: picarx/emulators/picarx_clutchgear_driver:latest
+    env_file:
+      - ./core/dtp/env/picarx.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/drivers/clutchgear:/root/catkin_ws/src/drivers/clutchgear
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
+      roslaunch picarx_clutchgear_driver ackermann_clutchgear_driver.launch i2c_port:=/dev/i2c-1"
+    depends_on:
+      - picarx
+    networks:
+      - picarx
+
+  ackermann_skill-pt:
+    build: ./ros/skills/ackermann_drive
+    image: picarx/skills/picarx_ackermann_drive:latest
+    env_file:
+      - ./core/dtp/env/picarx.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- 
+      roslaunch picarx_ackermann_drive ackermann_skill.launch"
+    depends_on:
+      - picarx
+    networks:
+      - picarx
+
+networks:
+  picarx:
+    external: true
