@@ -1,28 +1,26 @@
 # Digital Twin Prototype of a PiCar-X
-This project is part of my PhD thesis and can be used to demonstrate a basic Digital Twin (Prototype) of a PiCar-X by Sunfounder.
-There is basic Python implementation that can be used to run the PiCar-X, however, I recommand using the ROS packages, since they also can be connected to a Gazebo simulation.
+The goal of this project is to give an insight into practice and how the developed of IIoT applications changes.We demonstrate the basic idea of a Digital Twin (Prototype) by the example of a PiCar-X by Sunfounder.
+This project was implemented with via ROS packages, which can be connected to a Gazebo simulation.
 
 <img style="display: block; margin: auto;" src="./docs/picarx-gazebo.gif" width="500" />
 
 # Activate GPIO and I2C on Your System
-This project based on ROS and Docker. Due to the used interfaces on the RPi, we have to use Linux Kernel functions for GPIO and I2C. Before you can start this project
-you have to activate GPIO and I2C. If you already activated these modules, you can proceed with ##. Otherwise you have to build these modules first.
+This project based on ROS and Docker. Due to the used interfaces on the RPi, we have to use Linux Kernel functions for GPIO and I2C. Before you can start this project you have to activate GPIO and I2C. If you already activated these modules, you can proceed with ##. Otherwise you have to build these modules first.
 
-1. Create a GPIO mockup chip:
+- [Install on Ubuntu 20.04](#build-new-linux-kernel)
+- [Install on Windows (with WSL2)](#build-new-windows-wsl2-kernel)
+
+<strong>If you are using this project with WSL2, you also have to [install and start the XLaunch](#xlaunch-for-windows). Otherwise you can start Gazebo with Docker.</strong>
+
+If you already have built the modules, you can activate them via 
 ```console 
     sudo modprobe gpio-mockup gpio_mockup_ranges=1,41
-```
-
-2. Enable I2C:
-```console 
     sudo modprobe i2c-dev
     sudo modprobe i2c-stub chip_addr=0x14
 ```
 
 # Start with Docker compose
 You can start the whole Digital Twin Prototype with the <em>docker-compose</em> file in this folder. We use a core container, where all other containers are built on. When you built the containers the first time, you have to build the core container first.
-
-<strong>If you are using this project with WSL2, you need to [install and start the XLaunch first](#xlaunch-for-windows).</strong>
 
 ```console 
     docker compose -f docker-compose-dtp.yml build picarx
