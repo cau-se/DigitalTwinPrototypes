@@ -1,0 +1,58 @@
+version: '3'    
+
+services:
+  picarx-tests:
+    build: .
+    image: picarx/core:latest
+    environment:
+      - ROS_HOSTNAME=picarx-tests
+    tty: true
+    ports:
+      - 11311:11311
+    command: roscore
+    networks:
+      - picarx
+
+  shadow-dtp:
+    image: picarx/core:latest
+    env_file:
+      - ./integration_tests.env
+    tty: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- 
+      roslaunch arches_core digitalshadow_pt.launch"
+    networks:
+      - picarx
+
+  steering-dtp:
+    image: picarx/emulators/picarx_clutchgear_driver:latest
+    env_file:
+      - ./integration_tests.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} --
+      roslaunch picarx_clutchgear_driver ackermann_clutchgear_driver.launch"
+    depends_on:
+      - picarx-tests
+    networks:
+      - picarx
+
+  ackermann_skill-dtp:
+    image: picarx/skills/picarx_ackermann_drive:latest
+    env_file:
+      - ./integration_tests.env
+    tty: true
+    privileged: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- 
+      roslaunch picarx_ackermann_drive ackermann_skill.launch"
+    depends_on:
+      - picarx-tests
+    networks:
+      - picarx
+
+
+networks:
+  picarx:
+    external: true

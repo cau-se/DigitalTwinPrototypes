@@ -32,6 +32,28 @@ Afterwards, you can build all containers and start the Digital Twin Prototype wh
     docker compose -f docker-compose-dtp.yml up
 ```
 
+# Example Integration Tests
+In this project we also demonstrate how to execute small integration tests with ROS and Docker. The drivers of the clutchgear and the DC Motor have integration tests
+in their <em>tests</em> folders.
+
+```console
+cd ./ros/drivers/clutchgear/tests
+```
+
+There you will find a docker-compose file that starts the master, DS, the Ackermann Skill, and the clutchgear driver nodes. The integration tests publishes an angle to the driver node and reads
+the value of the PWM pin.
+
+````console
+# START THE DOCKER COMPOSE FILE
+docker-compose -f ./docker-compose.yml up -d
+
+# WAIT A FEW SECONDS UNTIL THE NODES ARE STARTED
+docker exec -it tests-steering-dtp-1 /bin/bash -c "source devel/picarx_clutchgear_driver/setup.bash && rostest picarx_clutchgear_driver integration_tests.test"
+
+# REMOVE THE CONTAINERS AFTER THE TESTS
+docker-compose -f ./docker-compose.yml down
+```
+
 # Build new Windows WSL2 Kernel
 WSL2 Kernel can be found on [the official WSL2 Linux Kernel GitHub page](https://github.com/microsoft/WSL2-Linux-Kernel).
 
