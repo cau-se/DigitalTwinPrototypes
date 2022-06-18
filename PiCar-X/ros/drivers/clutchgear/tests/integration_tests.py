@@ -21,21 +21,18 @@ class TestAckermannClutchGear(unittest.TestCase):
         self.publisher.publish(Int8(20)) # 110 degree for pwm
         time.sleep(0.5)
         pulse_width = self.pwm_pin.register_channel.read()
-        rospy.logerr(pulse_width)
         self.assertEqual(pulse_width, 176)
 
     def test_turn_left(self):
         self.publisher.publish(Int8(-10)) # 80 degree for pwm
         time.sleep(0.5)
         pulse_width = self.pwm_pin.register_channel.read()
-        rospy.logerr(pulse_width)
         self.assertEqual(pulse_width, 142)
 
     def test_straight(self):
         self.publisher.publish(Int8(0)) # 90 degree for pwm
         time.sleep(0.5)
         pulse_width = self.pwm_pin.register_channel.read()
-        rospy.logerr(pulse_width)
         self.assertEqual(pulse_width, 154)
 
 

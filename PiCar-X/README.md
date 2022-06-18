@@ -37,21 +37,12 @@ In this project we also demonstrate how to execute small integration tests with 
 in their <em>tests</em> folders.
 
 ```console
-cd ./ros/drivers/clutchgear/tests
-```
+# CLUTCHGEAR DRIVER (Steering)
+docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged -it picarx/drivers/clutchgear:latest /bin/bash -c "source ./devel/picarx_clutchgear_driver/setup.bash 
+&& rostest picarx_clutchgear_driver integration_tests.test"" 
 
-There you will find a docker-compose file that starts the master, DS, the Ackermann Skill, and the clutchgear driver nodes. The integration tests publishes an angle to the driver node and reads
-the value of the PWM pin.
-
-````console
-# START THE DOCKER COMPOSE FILE
-docker-compose -f ./docker-compose.yml up -d
-
-# WAIT A FEW SECONDS UNTIL THE NODES ARE STARTED
-docker exec -it tests-steering-dtp-1 /bin/bash -c "source devel/picarx_clutchgear_driver/setup.bash && rostest picarx_clutchgear_driver integration_tests.test"
-
-# REMOVE THE CONTAINERS AFTER THE TESTS
-docker-compose -f ./docker-compose.yml down
+# DC MOTOR DRIVER
+docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged -it picarx/drivers/dcmotor:latest /bin/bash -c "source ./devel/picarx_dcmotor_driver/setup.bash && rostest picarx_dcmotor_driver integration_tests.test"
 ```
 
 # Build new Windows WSL2 Kernel
