@@ -146,8 +146,8 @@ scripts/config --disable CONFIG_SYSTEM_TRUSTED_KEYS
 # This will take quite some time, with more cores you are faster
 make -j #NumberOfCores
 make bzImage
-make modules_install
-make install
+sudo make modules_install
+sudo make install
 
 sudo update-grub
 
