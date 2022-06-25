@@ -1,4 +1,4 @@
-FROM git.geomar.de:11411/open-source/arches/arches_core:latest
+FROM git.geomar.de:11411/open-source/arches/arches_core:1-0-0
 
 COPY ./core ./src/core
 COPY ./ros/picarx_msgs ./src/picarx_msgs

@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
-# Copyright 2021 Alexander Barbie
-# 
+# Copyright 2022 Alexander Barbie
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
+
 import rospy
 from picarx.drivers.clutchgear import AbstractClutchGearDriver
+from picarx_msgs.msg import ClutchGearStatus
 from std_msgs.msg import Int8
-import argparse
+
 
 class Options(object):
 
@@ -34,13 +37,15 @@ class Options(object):
     def get_args(self):
         return vars(self.args)
 
+
 class AckermannClutchGearDriver(AbstractClutchGearDriver):
-    
+
     def __init__(self, name: str, pwm_pin: str, i2c_port: str, frequency: int = 50):
         super(AckermannClutchGearDriver, self).__init__(pwm_pin, i2c_port)
         self.name = name
         self.frequency = frequency
-        self.steering_subscriber = None
+        self.command_subscriber = None
+        self.status_publisher = None
 
     def rotate(self, ros_msgs):
         angle = ros_msgs.data
@@ -56,6 +61,7 @@ class AckermannClutchGearDriver(AbstractClutchGearDriver):
             pulse_width = self.angle_to_pulse_width(i)
             self.pwm_pin.pulse_width(pulse_width)
             rate.sleep()
+        self.send_status()
 
     def turn_right(self, angle):
         aimed_angle = angle + 90
@@ -64,6 +70,12 @@ class AckermannClutchGearDriver(AbstractClutchGearDriver):
             pulse_width = self.angle_to_pulse_width(i)
             self.pwm_pin.pulse_width(pulse_width)
             rate.sleep()
+        self.send_status()
+
+    def send_status(self):
+        current_pulse_width = self.pwm_pin.register_channel.read()
+        current_angle = self.pulse_width_to_angle(current_pulse_width)
+        self.status_publisher.publish(ClutchGearStatus(angle=current_angle))
 
     def stop(self):
         rospy.loginfo("Shutting Ackermann steering driver down")
@@ -72,16 +84,18 @@ class AckermannClutchGearDriver(AbstractClutchGearDriver):
         rospy.init_node(self.name, anonymous=True)
         rospy.loginfo("Ackermann steering driver initialized")
         rospy.on_shutdown(self.stop)
-        self.steering_subscriber = rospy.Subscriber(rospy.get_param('~steering_topic'), Int8, callback=self.rotate)
-    
+        self.command_subscriber = rospy.Subscriber(
+            rospy.get_param('~steering_topic'), Int8, callback=self.rotate)
+        self.status_publisher = rospy.Publisher(
+            rospy.get_param('~steering_status_topic'), ClutchGearStatus, queue_size=5)
         rospy.spin()
-
 
 
 if __name__ == '__main__':
     try:
         options = Options(rospy.myargv()[1:])
-        ackermann_clutchgear_driver = AckermannClutchGearDriver(options.args.name, options.args.pwm_pin, options.args.i2c_port)
+        ackermann_clutchgear_driver = AckermannClutchGearDriver(
+            options.args.name, options.args.pwm_pin, options.args.i2c_port)
         ackermann_clutchgear_driver.start()
     except rospy.ROSInterruptException:
         pass

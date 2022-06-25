@@ -32,6 +32,23 @@ Afterwards, you can build all containers and start the Digital Twin Prototype wh
     docker compose -f docker-compose-dtp.yml up
 ```
 
+## Let the DTP drive
+After you start all Docker containers, you can switch into one of the containers and publish a picarx_msgs/Drive message, which will move the DTP with a certain speed and steering angle.
+
+```console
+    # SWITCH INTO THE CONTAINER
+    docker exec -it picar-x-ackermann_skill-dtp-1 /bin/bash
+
+    # INSIDE CONTAINER:
+    source /root/catkin_ws/devel/picarx_ackermann_drive/setup.bash
+
+    # PUBLISH A MESSAGE TO TURN RIGHT WITH 50 percent motor speed
+    rostopic pub /picarx/drive/command picarx_msgs/Drive "{speed: 50, angle: 20}"
+
+    # PUBLISH A MESSAGE TO TURN LEFT WITH 80 percent motor speed
+    rostopic pub /picarx/drive/command picarx_msgs/Drive "{speed: 80, angle: -20}"
+```
+
 # Example Integration Tests
 In this project we also demonstrate how to execute small integration tests with ROS and Docker. The drivers of the clutchgear and the DC Motor have integration tests
 in their <em>tests</em> folders.
@@ -186,3 +203,26 @@ Start the application with following configuration:
 2. Second Screen: Start no client
 3. Third Screen: Deactivate "<em>Native opengl</em>"
 4. Fourth Screen: Start
+
+# Troubleshooting
+<strong>Problem 1: /dev/I2C-X is busy:</strong>
+
+If you started the Docker compose file before you activated I2C, than a folder named /dev/I2C-X was created on your system, due to the mounting of volumes.
+
+<em>Solution:</em> Remove the folder via 
+```console
+sudo rm -r /dev/i2c-x
+```
+And [activate I2C](#activate-gpio-and-i2c-on-your-system)
+
+<strong>Problem 2: GPIO ports exist after the containers crashed/were killed.</strong>
+
+If you use CTRL+C more than once, you kill the containers instead of stopping them. Although deleting the GPIO pins is part of the shutdown routine, this is skipped if the containers crash or get killed.
+
+<em>Solution:</em> 
+Try to unexport the pins manually.
+````console
+echo 24 > /sys/class/gpio/unexport
+echo 23 > /sys/class/gpio/unexport
+```
+If this does not work, due to permission issues, than reboot your WSL2 or Linux System.

@@ -2,21 +2,25 @@ cmake_minimum_required(VERSION 3.0.2)
 project(picarx_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
-  std_msgs
   message_generation
+  std_msgs
+  arches_msgs
 )
 
 add_message_files(
 	DIRECTORY msg
     FILES
-    DCMotor.msg
-    Test.msg
+    ClutchGearStatus.msg
+    Drive.msg
+    MotorStatus.msg
+    DriveStatus.msg
 )
 
 
 generate_messages(
    DEPENDENCIES
    std_msgs
+   arches_msgs
 )
 
 catkin_package()

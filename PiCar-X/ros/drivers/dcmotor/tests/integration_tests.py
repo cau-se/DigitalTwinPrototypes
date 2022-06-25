@@ -28,7 +28,6 @@ class TestDCMotors(unittest.TestCase):
         publisher.publish(Int8(50)) # 110 degree for pwm
         time.sleep(0.5)
         pulse_width = pwm_pin.register_channel.read()
-        rospy.logerr(pulse_width)
         self.assertEqual(direction_pin.value, 1)
         self.assertEqual(pulse_width, 2047)
 
