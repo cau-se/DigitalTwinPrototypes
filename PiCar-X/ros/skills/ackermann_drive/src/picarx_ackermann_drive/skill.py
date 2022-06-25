@@ -1,4 +1,4 @@
-# Copyright 2021-2022 Alexander Barbie
+# Copyright 2022 Alexander Barbie
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +13,14 @@
 # limitations under the License.
 
 from typing import Any, Union
+from numpy import angle
 import rospy
 from std_msgs.msg import Int8
 from arches_core.skills import Skill, SkillType
 from arches_core.digitalthread import DigitalThread
+from picarx_msgs.msg import DriveStatus, MotorStatus, ClutchGearStatus
 import argparse
+import message_filters
 
 class AckermannStartOptions(object):
     """Start argument parser to the digital shadow skill.
@@ -45,6 +48,7 @@ class AckermannDriveSkill(Skill):
         self.motor_left_publisher = None
         self.motor_right_publisher = None
         self.clutchgeer_publisher = None
+        self.status_publisher = None
 
     @property
     def command_subscriber(self) -> Union[None, rospy.Subscriber]:
@@ -60,6 +64,21 @@ class AckermannDriveSkill(Skill):
         else:
             raise ValueError(
                 "Subscriber has to be of type rospy.Subscriber or None, but {} was given.".format(type(subscriber)))
+
+    @property
+    def status_publisher(self) -> Union[None, rospy.Publisher]:
+        return self.__status_publisher
+
+    @status_publisher.setter
+    @DigitalThread.data
+    def status_publisher(self, publisher: rospy.Publisher) -> Union[None, rospy.Publisher]:
+        if publisher is None:
+            self.__status_publisher = None
+        elif isinstance(publisher, rospy.Publisher):
+            self.__status_publisher = publisher
+        else:
+            raise ValueError(
+                "Publisher has to be of type rospy.Publisher or None, but {} was given.".format(type(publisher)))
 
     @property
     def motor_left_publisher(self) -> Union[None, rospy.Publisher]:
@@ -104,9 +123,28 @@ class AckermannDriveSkill(Skill):
                 "Subscriber has to be of type rospy.Publisher or None, but {} was given.".format(type(publisher)))
 
     def drive(self, ros_msg: Any) -> None:
+        # There are problems with understeering in the Ackermann approximation in the simulation, thus we limitate
+        # the steering angle to [-20, 20] degree, until the understeering is fixed. Max angle of the physical twin
+        # is around |35| degree.
+        if ros_msg.angle > 20:
+            angle = 20
+        elif ros_msg.angle < -20:
+            angle = -20
+        else:
+            angle = ros_msg.angle
+
         self.motor_left_publisher.publish(Int8(ros_msg.speed))
         self.motor_right_publisher.publish(Int8(ros_msg.speed))
-        self.clutchgeer_publisher.publish(Int8(ros_msg.angle))
+        self.clutchgeer_publisher.publish(Int8(angle))
 
+    def send_status(self, motor_left_status: MotorStatus, motor_right_status:MotorStatus, clutchgear_status:ClutchGearStatus) -> None:
+        timestamp = rospy.get_rostime()
+        status_message = DriveStatus(timestamp=timestamp, motor_left = motor_left_status, motor_right = motor_right_status, clutchgear=clutchgear_status)
+        self.status_publisher.publish(status_message)
+
+    def init_status_filter(self, motor_left_filter, motor_right_filter, steering_filter):
+        ts = message_filters.ApproximateTimeSynchronizer([motor_left_filter, motor_right_filter, steering_filter], queue_size=10,slop=0.5, allow_headerless=True)
+        ts.registerCallback(self.send_status)
+    
     def stop(self):
-        rospy.logerr("SHUTTING DOWN")
+        rospy.loginfo("SHUTTING DOWN")

@@ -12,4 +12,5 @@
     <depend>message_generation</depend>
     <depend>message_runtime</depend>
     <depend>std_msgs</depend>
+    <depend>arches_msgs</depend>
 </package>

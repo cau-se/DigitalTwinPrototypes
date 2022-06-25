@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2021 Alexander Barbie
+# Copyright 2022 Alexander Barbie
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union
 import rospy
 from picarx.emulators.clutchgear import AbstractClutchGearEmulator
 from std_msgs.msg import Float64
@@ -38,7 +37,7 @@ class Options(object):
 
 class AckermannClutchGearEmulator(AbstractClutchGearEmulator):
     
-    def __init__(self, name: str, pwm_pin: str, i2c_port: str, frequency: int = 50):
+    def __init__(self, name: str, pwm_pin: str, i2c_port: str, frequency: int = 50) -> None:
         super(AckermannClutchGearEmulator, self).__init__(pwm_pin, i2c_port)
         self.name = name
         self.frequency = frequency
@@ -47,11 +46,11 @@ class AckermannClutchGearEmulator(AbstractClutchGearEmulator):
         self.wheel_base = None
         self.wheel_track = None
 
-    def angle_inside_wheel(self, angle):
+    def angle_inside_wheel(self, angle) -> float:
         alpha_inside = math.atan(self.wheel_base / (self.turning_radius(angle) - self.wheel_track/2))
         return alpha_inside
 
-    def angle_outside_wheel(self, angle):
+    def angle_outside_wheel(self, angle) -> float:
         alpha_outside = math.atan(self.wheel_base / (self.turning_radius(angle) + self.wheel_track/2))
         return alpha_outside
 

@@ -61,7 +61,7 @@ services:
 
   steering-pt:
     build: ./ros/drivers/clutchgear
-    image: picarx/emulators/picarx_clutchgear_driver:latest
+    image: picarx/emulators/clutchgear:latest
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -80,7 +80,7 @@ services:
 
   ackermann_skill-pt:
     build: ./ros/skills/ackermann_drive
-    image: picarx/skills/picarx_ackermann_drive:latest
+    image: picarx/skills/ackermann_drive:latest
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true

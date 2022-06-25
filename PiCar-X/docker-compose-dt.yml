@@ -44,7 +44,7 @@ services:
 
   ackermann_skill-dt:
     build: ./ros/skills/ackermann_drive
-    image: picarx/skills/picarx_ackermann_drive:latest
+    image: picarx/skills/ackermann_drive:latest
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
