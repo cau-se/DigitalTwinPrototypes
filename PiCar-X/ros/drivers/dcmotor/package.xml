@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>The picarx_dcmotor_driver package to run a DCMotore Driver Node</description>
 
-  <maintainer email="abarbie@geomar.de">Alexander Barbie</maintainer>
+  <maintainer email="alexanderbarbie@gmx.de">Alexander Barbie</maintainer>
 
   <license>Apache 2.0</license>
 

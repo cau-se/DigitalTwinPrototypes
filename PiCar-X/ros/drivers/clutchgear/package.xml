@@ -4,7 +4,7 @@
     <version>0.0.0</version>
     <description>ROS driver for the SunFounder Clutch Gear</description>
 
-    <maintainer email="abarbie@geomar.de">Alexander Barbie</maintainer>
+    <maintainer email="alexanderbarbie@gmx.de">Alexander Barbie</maintainer>
 
     <license>Apache 2.0</license>
 
