@@ -1,0 +1,100 @@
+version: '3'
+
+services:
+  picarx-dt:
+    build: .
+    image: picarx/core:latest
+    environment:
+      - ROS_HOSTNAME=picarx-dt
+      - ROS_MASTER_URI=http://picarx-dt:11313
+      - ROS_HOST_PORT=11313
+    tty: true
+    ports:
+      - 11313:11313
+    command: roscore -p 11313
+    networks:
+      - picarx
+
+  mosquitto:
+    container_name: mqtt-server
+    image: eclipse-mosquitto
+    ports:
+      - 1883:1883
+    volumes:
+      - ./core/dtp/config:/root/catkin_ws/mosquitto
+    command: mosquitto -c /root/catkin_ws/mosquitto/mosquitto.conf -p 1883
+    networks:
+      - picarx
+
+  picarx-gazebo:
+    build:
+      context: .
+      dockerfile: ./simulation/Dockerfile
+    image: picarx/picarx-gazebo:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    environment:
+      - DISPLAY=host.docker.internal:0.0
+      - LIBGL_ALWAYS_INDIRECT=0
+      - ROS_MASTER_URI=http://picarx-dt:11313
+    tty: true
+    volumes:
+      - ./core:/root/catkin_ws/src/core
+      - ./simulation:/root/catkin_ws/src/simulation
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_gazebo picarx-world.launch & /root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_control picarx_control.launch"
+    networks:
+      - picarx
+    depends_on:
+      - picarx-dt
+
+  shadow-dt:
+    image: picarx/core:latest
+    env_file:
+      - ./core/dtp/env/picarx-dt.env
+    tty: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_core digitalshadow_dt.launch"
+    networks:
+      - picarx
+
+  mqtt-dt:
+    image: git.geomar.de:11411/open-source/arches/arches_mqtt_bridge:latest
+    env_file:
+      - ./core/dtp/env/picarx-dt.env
+    tty: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_mqtt_bridge dt_client.launch host:=mqtt-server"
+    networks:
+      - picarx
+
+  ackermann_skill-dt:
+    build: ./ros/skills/ackermann_drive
+    image: picarx/skills/ackermann_drive:latest
+    env_file:
+      - ./core/dtp/env/picarx-dt.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_ackermann_drive ackermann_skill.launch"
+    networks:
+      - picarx
+
+  drive_monitor:
+    build: ./ros/skills/ackermann_drive
+    image: picarx/skills/ackermann_drive:latest
+    env_file:
+      - ./core/dtp/env/picarx-dt.env
+    tty: true
+    privileged: true
+    volumes:
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_ackermann_drive monitor_ds.launch"
+    networks:
+      - picarx
+
+networks:
+  picarx:
+    external: true

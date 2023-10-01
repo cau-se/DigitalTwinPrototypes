@@ -20,19 +20,29 @@ If you already have built the modules, you can activate them via
 ```
 
 # Start with Docker compose
+
 You can start the whole Digital Twin Prototype with the <em>docker-compose</em> file in this folder. We use a core container, where all other containers are built on. When you built the containers the first time, you have to build the core container first.
 
-```console 
+```console
+
     docker compose -f docker-compose-dtp.yml build picarx
 ```
 
+Create a Docket network.
+
+```console
+    docker network create picarx
+```
+
 Afterwards, you can build all containers and start the Digital Twin Prototype when all containers are built.
+
 ```console 
     docker compose -f docker-compose-dtp.yml build
     docker compose -f docker-compose-dtp.yml up
 ```
 
 ## Let the DTP drive
+
 After you start all Docker containers, you can switch into one of the containers and publish a picarx_msgs/Drive message, which will move the DTP with a certain speed and steering angle.
 
 ```console
@@ -50,6 +60,7 @@ After you start all Docker containers, you can switch into one of the containers
 ```
 
 # Example Integration Tests
+
 In this project we also demonstrate how to execute small integration tests with ROS and Docker. The drivers of the clutchgear and the DC Motor have integration tests
 in their <em>tests</em> folders.
 
@@ -63,6 +74,7 @@ docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/de
 ```
 
 # Build new Windows WSL2 Kernel
+
 WSL2 Kernel can be found on [the official WSL2 Linux Kernel GitHub page](https://github.com/microsoft/WSL2-Linux-Kernel).
 
 ```console
@@ -96,8 +108,10 @@ make KCONFIG_CONFIG=.config -j $NumberOfCores    # if you have 4 cores, just typ
 ```
 
 ## Activate new WSL2 Kernel:
+
 Create a folder where you will copy the Kernel from the WSL2 VM to Windows, for example C:\WSLKernel. Then
 go back to your Linux console and copy the bzImage and shutdown the WSL2 VM:
+
 ```console
 # IN WSL:
 cp arch/x86/boot/bzImage /mnt/c/WSLKernel
@@ -111,13 +125,14 @@ Then rename the <em>kernel</em> file to <em>kernel.old</em>, <strong>do not dele
 
 After you copied the <em>bzImage</em> into the folder, rename <em>bzImage</em> to <em>kernel</em>. Afterwards, start Ubuntu again and go into the WSL2 Kernel folder from the privious steps and install the modules via:
 
-```
+```console
 make modules_install
 ```
 
 If you built and installed the new kernel properly, you should now be able to [activate GPIO and I2C](#activate-gpio-and-i2c-on-your-system). 
 
 ## Build new Linux-Kernel
+
 Download your prefered Kernel version:
 
 First check your Kernel version on your system:
@@ -136,6 +151,7 @@ sudo apt-install wget unzip build-essential flex bison libssl-dev libelf-dev dwa
 ```
 
 ### Build with Linux
+
 ```console
 uname -r
 
@@ -196,6 +212,7 @@ linux-5.13
 If you built and installed the new kernel properly, you should now be able to [activate GPIO and I2C](#activate-gpio-and-i2c-on-your-system). 
 
 ## XLaunch for Windows
+
 [Download the VcXsrv X Server for Windows](https://sourceforge.net/projects/vcxsrv/).
 Start the application with following configuration:
 
@@ -205,14 +222,17 @@ Start the application with following configuration:
 4. Fourth Screen: Start
 
 # Troubleshooting
+
 <strong>Problem 1: /dev/I2C-X is busy:</strong>
 
 If you started the Docker compose file before you activated I2C, than a folder named /dev/I2C-X was created on your system, due to the mounting of volumes.
 
 <em>Solution:</em> Remove the folder via 
+
 ```console
 sudo rm -r /dev/i2c-x
 ```
+
 And [activate I2C](#activate-gpio-and-i2c-on-your-system)
 
 <strong>Problem 2: GPIO ports exist after the containers crashed/were killed.</strong>
@@ -221,8 +241,18 @@ If you use CTRL+C more than once, you kill the containers instead of stopping th
 
 <em>Solution:</em> 
 Try to unexport the pins manually.
-````console
+
+```console
 echo 24 > /sys/class/gpio/unexport
 echo 23 > /sys/class/gpio/unexport
 ```
 If this does not work, due to permission issues, than reboot your WSL2 or Linux System.
+
+## Testing the Digital Shadow
+
+```console
+docker exec -it picar-x-drive_monitor-1 /bin/bash
+source install/setup.bash
+
+rostopic pub /drive/status picarx_msgs/DriveStatus "{ 'header': { 'skillID': '1', 'topicID': '0'}, 'timestamp': {'secs': 0, 'nsecs': 0}, 'motor_left': { 'location': 0, 'direction': 1, 'speed': 300}, 'motor_right': {'location': 1, 'direction': -1, 'speed': 300}, 'clutchgear': { 'location': 0, 'pulsewidth': 180}}"
+```
