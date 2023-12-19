@@ -1,0 +1,169 @@
+version: '3'
+
+services:
+  picarx-gazebo:
+    build:
+      context: .
+      dockerfile: ./simulation/Dockerfile
+    image: picarx/picarx-gazebo:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    environment:
+      - DISPLAY=host.docker.internal:0.0
+      - LIBGL_ALWAYS_INDIRECT=0
+      - ROS_HOSTNAME=picarx-gazebo
+    tty: true
+    ports:
+      - 11312:11312
+    volumes:
+      - ./core:/root/catkin_ws/src/core
+      - ./simulation:/root/catkin_ws/src/simulation
+    command: /bin/bash -c "roslaunch picarx_gazebo picarx-world.launch & /root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_control picarx_control.launch & source install/setup.bash ; sleep 30 ; python3 src/simulation/picarx_control/tests/steering_integration_test.py"
+    networks:
+      - picarx
+
+  shadow-dtp:
+    image: picarx/core:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    tty: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_core digitalshadow_pt.launch"
+    networks:
+      - picarx
+
+  mqtt-dtp:
+    image: git.geomar.de:11411/open-source/arches/arches_mqtt_bridge:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    tty: true
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_mqtt_bridge pt_client.launch host:=mqtt-server"
+    networks:
+      - picarx
+
+  motor_left-dtp:
+    build: ./ros/drivers/dcmotor
+    image: picarx/drivers/dcmotor:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_dcmotor_driver dcmotor_left.launch"
+    depends_on:
+      - picarx-gazebo
+    networks:
+      - picarx
+
+  motor_right-dtp:
+    image: picarx/drivers/dcmotor:latest
+    tty: true
+    env_file:
+      - ./core/dtp/env/simulation.env
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_dcmotor_driver dcmotor_right.launch"
+    depends_on:
+      - picarx-gazebo
+    networks:
+      - picarx
+
+  steering-dtp:
+    build: ./ros/drivers/clutchgear
+    image: picarx/drivers/clutchgear:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/drivers/clutchgear:/root/catkin_ws/src/drivers/clutchgear
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_clutchgear_driver ackermann_clutchgear_driver.launch"
+    depends_on:
+      - picarx-gazebo
+    networks:
+      - picarx
+
+  ackermann_skill-dtp:
+    build: ./ros/skills/ackermann_drive
+    image: picarx/skills/ackermann_drive:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_ackermann_drive ackermann_skill.launch"
+    depends_on:
+      - picarx-gazebo
+    networks:
+      - picarx
+
+  motor_emulator_left-dtp:
+    build: ./ros/emulators/dcmotor
+    image: picarx/emulators/dcmotor:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/emulators/dcmotor:/root/catkin_ws/src/emulators/dcmotor
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_dcmotor_emulator dcmotor_emulator_left.launch"
+    depends_on:
+      - picarx-gazebo
+    networks:
+      - picarx
+
+  motor_emulator_right-dtp:
+    image: picarx/emulators/dcmotor:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/emulators/dcmotor:/root/catkin_ws/src/emulators/dcmotor
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_dcmotor_emulator dcmotor_emulator_right.launch"
+    depends_on:
+      - picarx-gazebo
+    networks:
+      - picarx
+
+  steering_emulator-dtp:
+    build: ./ros/emulators/clutchgear
+    image: picarx/emulators/clutchgear:latest
+    env_file:
+      - ./core/dtp/env/simulation.env
+    tty: true
+    privileged: true
+    volumes:
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - ./core:/root/catkin_ws/src/core
+      - ./ros/emulators/clutchgear:/root/catkin_ws/src/emulators/clutchgear
+    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch picarx_clutchgear_emulator ackermann_clutchgear_emulator.launch"
+    depends_on:
+      - picarx-gazebo
+    networks:
+      - picarx
+
+networks:
+  picarx:
+    external: true

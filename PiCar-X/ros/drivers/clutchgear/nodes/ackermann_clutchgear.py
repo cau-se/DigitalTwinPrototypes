@@ -74,8 +74,9 @@ class AckermannClutchGearDriver(AbstractClutchGearDriver):
 
     def send_status(self):
         current_pulse_width = self.pwm_pin.register_channel.read()
-        current_angle = self.pulse_width_to_angle(current_pulse_width)
-        self.status_publisher.publish(ClutchGearStatus(angle=current_angle))
+        # current_angle = self.pulse_width_to_angle(current_pulse_width)
+        self.status_publisher.publish(
+            ClutchGearStatus(pulsewidth=current_pulse_width))
 
     def stop(self):
         rospy.loginfo("Shutting Ackermann steering driver down")

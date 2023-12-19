@@ -12,6 +12,7 @@
   <depend>rospy</depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>picarx_msgs</exec_depend>
+  <exec_depend>gazebo_msgs</exec_depend>
 
 
 </package>
