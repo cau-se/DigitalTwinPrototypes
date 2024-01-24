@@ -1,0 +1,7 @@
+#Dockerignore
+Dockerfile
+Dockerfile-*
+*/dist
+*/*.egg*
+*/build
+venv/*

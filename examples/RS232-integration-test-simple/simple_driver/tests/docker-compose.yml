@@ -1,0 +1,40 @@
+version: "3.5"
+services:
+  simple-driver:
+    container_name: "simple-driver"
+    build:
+      context: ../../simple_driver
+    environment:
+      - EMU_SIM_TTY_1=/dev/ttyUSB0
+      - EMU_SIM_TTY_1_PORT=7060
+    ports:
+      - 7060:7060
+    tty: true
+    command: bash -c "sleep 1 && python3 -m unittest /home/driver/simple_driver/tests/integration-tests.py"
+    networks:
+      simple-test-network:
+        ipv4_address: 172.18.0.10
+
+  simple-emulator:
+    container_name: "simple-emulator"
+    build:
+      context: ../../simple_emulator
+    environment:
+      - SIM_TTY_1=/dev/ttyUSB0
+      - SIM_TTY_1_ADDRESS=172.18.0.10
+      - SIM_TTY_1_PORT=7060
+    tty: true
+    command: bash -c "sleep 0.5 && python3 /home/emulator/simple_emulator/src/simple_emulator/emulator.py $${SIM_TTY_1} /home/emulator/simple_emulator/include/data/tempdata.csv 0.0"
+    depends_on:
+      - simple-driver
+    networks:
+      simple-test-network:
+        ipv4_address: 172.18.0.11
+
+networks:
+  simple-test-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/24

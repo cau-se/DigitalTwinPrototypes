@@ -1,4 +1,9 @@
 # Welcome to my research on Digital Twins
-In the folder IEEE Internet Computing you will find a video that shows Digital Twins of ocean observation systems taken in the Baltic Sea in October 2020.
 
-In the folder PiCar-X you will find an example of a Digital Twin.
+This project offers three valuable insights into digital twins and digital twin prototypes:
+
+- Within the IEEE Internet Computing folder, there is a video showcasing Digital Twins of ocean observation systems. These were recorded in the Baltic Sea in October 2020 and provide a practical illustration of digital twins in action.
+
+- The PiCar-X folder contains a Digital Twin Prototype, developed using the ARCHES Digital Twin Framework. This prototype is accompanied by various Docker compose files, each illustrating different aspects of the digital twin concept.
+  
+- In the examples folder, you'll find smaller projects that demonstrate integration tests and the virtualization of communication protocols, such as RS232. These projects serve as practical guides to implementing digital twin technologies.
