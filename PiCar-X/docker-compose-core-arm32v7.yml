@@ -1,0 +1,10 @@
+services:
+  picarx-core-build:
+    build:
+      dockerfile: Dockerfile-arm32v7
+      context: .
+    image: abarbie/picarx:latest
+
+networks:
+  default:
+    driver: bridge

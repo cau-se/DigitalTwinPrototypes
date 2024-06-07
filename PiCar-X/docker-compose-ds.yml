@@ -1,9 +1,7 @@
-version: '3'
-
 services:
   picarx-dt:
     build: .
-    image: picarx/core:latest
+    image: abarbie/picarx:latest
     environment:
       - ROS_HOSTNAME=picarx-dt
       - ROS_MASTER_URI=http://picarx-dt:11313
@@ -48,7 +46,7 @@ services:
       - picarx-dt
 
   shadow-dt:
-    image: picarx/core:latest
+    image: abarbie/picarx:latest
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
