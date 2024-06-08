@@ -1,4 +1,6 @@
-FROM abarbie/picarx/core:latest
+ARG TAG
+
+FROM abarbie/picarx:${TAG}
 
 COPY . ./src/skills/ackermann_drive
 

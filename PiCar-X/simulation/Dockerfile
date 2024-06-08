@@ -8,7 +8,7 @@ RUN apt-get update \
     && pip3 install -U pip \
     && update-ca-certificates -f
 
-COPY --from=picarx/core:latest /root/catkin_ws/ .
+COPY --from=picarx/core:${TAG} /root/catkin_ws/ .
 COPY ./simulation ./src/simulation
 
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin config --isolate-devel --install && catkin build" \

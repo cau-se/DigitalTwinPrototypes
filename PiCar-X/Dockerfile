@@ -1,9 +1,11 @@
-FROM ros:noetic as rosnoetic
+ARG TAG=''
+
+FROM ${TAG:+${TAG}/}ros:noetic as rosnoetic
 ENV ASSET_NAME ''
 
 WORKDIR /root/catkin_ws/
 RUN apt update -y \
-    && apt-get install -y python3-pip python3-setuptools python3-catkin-tools wget unzip curl \
+    && apt-get install -y python3-pip python3-setuptools python3-catkin-tools wget unzip curl nano \
     && apt-get clean \
     && update-ca-certificates -f \
     && pip3 install --upgrade pip \
