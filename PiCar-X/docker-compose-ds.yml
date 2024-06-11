@@ -31,9 +31,10 @@ services:
 
   picarx-gazebo:
     build:
-      context: .
-      dockerfile: ./simulation/Dockerfile
-    image: picarx/picarx-gazebo:${TAG}
+      context: Dockerfile
+      dockerfile: ./simulation
+      target: desktop
+    image: abarbie/picarx/picarx-gazebo:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     environment:
@@ -61,14 +62,25 @@ services:
 
   mqtt-dt:
     image: abarbie/picarx/arches-mqtt-bridge:${TAG}
+    build:
+      dockerfile: Dockerfile-arches-mqtt-bridge
+      context: ./ros
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
-    tty: true
-    command: /bin/bash -c "roslaunch arches_mqtt_bridge dt_client.launch host:=mqtt-server"
+    command: /bin/bash -c "roslaunch arches_mqtt_bridge pt_client.launch host:=mqtt-server"
+    depends_on:
+      picarx:
+        condition: service_healthy
 
   ackermann_skill-dt:
-    build: ./ros/skills/ackermann_drive
-    image: picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./ros/skills/ackermann_drive
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
@@ -85,7 +97,7 @@ services:
 
   drive_monitor:
     build: ./ros/skills/ackermann_drive
-    image: picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx/skills/ackermann_drive:${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true

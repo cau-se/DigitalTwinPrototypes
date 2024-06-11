@@ -269,7 +269,7 @@ class Pin(FileSystemEventHandler):
             self.running = True
             try:
                 while reactor.running:
-                    time.sleep(1)
+                    time.sleep(1/50)
             finally:
                 observer.stop()
             observer.join()        

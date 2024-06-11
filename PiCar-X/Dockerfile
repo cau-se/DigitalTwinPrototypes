@@ -1,8 +1,6 @@
-ARG TAG=''
+ARG TAG=latest
 
 FROM ${TAG:+${TAG}/}ros:noetic as rosnoetic
-ENV ASSET_NAME ''
-
 WORKDIR /root/catkin_ws/
 RUN apt update -y \
     && apt-get install -y python3-pip python3-setuptools python3-catkin-tools wget unzip curl nano \
@@ -24,6 +22,8 @@ RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin config --isolate-d
     && echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 
 FROM adtf
+ENV ASSET_NAME ''
+
 COPY ./core ./src/core
 COPY ./ros/picarx_msgs ./src/picarx_msgs
 RUN pip3 install -e ./src/core/picarx \

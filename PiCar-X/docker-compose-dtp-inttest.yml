@@ -1,9 +1,10 @@
 services:
   picarx-gazebo:
     build:
-      context: .
-      dockerfile: ./simulation/Dockerfile
-    image: picarx/picarx-gazebo:${TAG}
+      context: Dockerfile
+      dockerfile: ./simulation
+      target: tests
+    image: abarbie/picarx/picarx-gazebo:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     environment:
@@ -25,7 +26,7 @@ services:
       start_period: 1s
 
   shadow-dtp:
-    image: picarx/core:${TAG}
+    image: abarbie/picarx:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -36,6 +37,11 @@ services:
 
   mqtt-dtp:
     image: abarbie/picarx/arches-mqtt-bridge:${TAG}
+    build:
+      dockerfile: Dockerfile-arches-mqtt-bridge
+      context: ./ros
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -45,8 +51,12 @@ services:
         condition: service_healthy
 
   motor_left-dtp:
-    build: ./ros/drivers/dcmotor
-    image: picarx/drivers/dcmotor:${TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./ros/drivers/dcmotor/
+      args:
+        - TAG=${TAG}
+    image: abarbie/picarx/drivers/dcmotor:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -62,7 +72,7 @@ services:
         condition: service_healthy
 
   motor_right-dtp:
-    image: picarx/drivers/dcmotor:${TAG}
+    image: abarbie/picarx/drivers/dcmotor:${TAG}
     tty: true
     env_file:
       - ./core/dtp/env/simulation.env
@@ -78,8 +88,12 @@ services:
         condition: service_healthy
 
   steering-dtp:
-    build: ./ros/drivers/clutchgear
-    image: picarx/drivers/clutchgear:${TAG}
+    image: abarbie/picarx/drivers/clutchgear:${TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./ros/drivers/clutchgear
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -95,8 +109,12 @@ services:
         condition: service_healthy
 
   ackermann_skill-dtp:
-    build: ./ros/skills/ackermann_drive
-    image: picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./ros/skills/ackermann_drive
+      args:
+        - TAG=${TAG}    
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -112,8 +130,12 @@ services:
         condition: service_healthy
 
   motor_emulator_left-dtp:
-    build: ./ros/emulators/dcmotor
-    image: picarx/emulators/dcmotor:${TAG}
+    image: abarbie/picarx/emulators/dcmotor:${TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./ros/emulators/dcmotor
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -129,7 +151,7 @@ services:
         condition: service_healthy
 
   motor_emulator_right-dtp:
-    image: picarx/emulators/dcmotor:${TAG}
+    image: abarbie/picarx/emulators/dcmotor:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -145,8 +167,12 @@ services:
         condition: service_healthy
 
   steering_emulator-dtp:
-    build: ./ros/emulators/clutchgear
-    image: picarx/emulators/clutchgear:${TAG}
+    image: abarbie/picarx/emulators/clutchgear:${TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./ros/emulators/clutchgear
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true

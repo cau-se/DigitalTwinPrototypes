@@ -1,7 +1,7 @@
 services:
   picarx-dt:
     build: .
-    image: picarx/core:${TAG}
+    image: abarbie/picarx:${TAG}
     environment:
       - ROS_HOSTNAME=picarx-dt
     tty: true
@@ -28,7 +28,7 @@ services:
         condition: service_healthy
 
   shadow-dt:
-    image: picarx/core:${TAG}
+    image: abarbie/picarx:${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
@@ -39,6 +39,11 @@ services:
 
   mqtt-dt:
     image: abarbie/picarx/arches-mqtt-bridge:${TAG}
+    build:
+      dockerfile: Dockerfile-arches-mqtt-bridge
+      context: ./ros
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
@@ -48,8 +53,12 @@ services:
         condition: service_healthy
 
   ackermann_skill-dt:
-    build: ./ros/skills/ackermann_drive
-    image: picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./ros/skills/ackermann_drive
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true

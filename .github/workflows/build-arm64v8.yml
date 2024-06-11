@@ -1,0 +1,26 @@
+name: PiCar-X Main Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: self-hosted, pi4-arm64v8
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build with Docker Compose
+      run: |
+        TAG=arm64v8 docker-compose -f docker-compose-core.yml build
+
+#    - name: Run pytest in Docker container
+#      run: |
+#        docker-compose -f docker-compose-core.yml run --rm app pytest
+
+#    - name: Start roslaunch in Docker container
+#      run: |
+#        docker-compose -f docker-compose-core.yml run --rm app roslaunch
+
+    - name: Push to Docker Hub
+      run: |
+        TAG=arm64v8 docker-compose -f docker-compose-core.yml push

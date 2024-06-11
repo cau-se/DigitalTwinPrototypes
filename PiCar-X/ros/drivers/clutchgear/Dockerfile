@@ -1,4 +1,4 @@
-ARG TAG
+ARG TAG=latest
 
 FROM abarbie/picarx:${TAG}
 
