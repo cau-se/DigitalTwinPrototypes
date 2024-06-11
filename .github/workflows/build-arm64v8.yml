@@ -10,6 +10,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Build with Docker Compose
+      working-directory: ./PiCar-X
       run: |
         TAG=arm64v8 docker compose -f docker-compose-core.yml build
 
@@ -22,5 +23,6 @@ jobs:
 #        docker-compose -f docker-compose-core.yml run --rm app roslaunch
 
     - name: Push to Docker Hub
+      working-directory: ./PiCar-X
       run: |
         TAG=arm64v8 docker compose -f docker-compose-core.yml push
