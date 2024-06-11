@@ -11,7 +11,7 @@ jobs:
 
     - name: Build with Docker Compose
       run: |
-        TAG=arm64v8 docker-compose -f docker-compose-core.yml build
+        TAG=arm64v8 docker compose -f docker-compose-core.yml build
 
 #    - name: Run pytest in Docker container
 #      run: |
@@ -23,4 +23,4 @@ jobs:
 
     - name: Push to Docker Hub
       run: |
-        TAG=arm64v8 docker-compose -f docker-compose-core.yml push
+        TAG=arm64v8 docker compose -f docker-compose-core.yml push
