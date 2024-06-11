@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: self-hosted, pi4-arm64v8
+    runs-on: self-hosted, rpi4
 
     steps:
     - uses: actions/checkout@v2
