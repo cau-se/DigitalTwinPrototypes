@@ -3,6 +3,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+      args:
+        - TAG=${TAG}
     image: abarbie/picarx:${TAG}
 
 networks:
