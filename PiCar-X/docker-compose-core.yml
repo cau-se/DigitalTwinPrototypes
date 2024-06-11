@@ -1,0 +1,10 @@
+services:
+  picarx-core-build:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: abarbie/picarx:${TAG}
+
+networks:
+  default:
+    driver: bridge

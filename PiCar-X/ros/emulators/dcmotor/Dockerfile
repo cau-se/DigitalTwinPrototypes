@@ -1,4 +1,6 @@
-FROM picarx/core:latest
+ARG TAG=latest
+
+FROM abarbie/picarx:${TAG}
 
 COPY . ./src/emulators/dcmotor
 

@@ -1,17 +1,19 @@
-version: '3'    
-
 services:
   picarx-dt:
     build: .
-    image: picarx/core:latest
+    image: abarbie/picarx:${TAG}
     environment:
       - ROS_HOSTNAME=picarx-dt
     tty: true
     ports:
       - 11313:11313
     command: roscore -p 11313
-    networks:
-      - picarx
+    healthcheck:
+      test: [ "CMD-SHELL", "curl $${ROS_MASTER_URI} || exit 1" ]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+      start_period: 1s
 
   mosquitto:
     container_name: mqtt-server
@@ -21,30 +23,42 @@ services:
     volumes:
       - ./core/dtp/config:/root/catkin_ws/mosquitto
     command: mosquitto -c /root/catkin_ws/mosquitto/mosquitto.conf -p 1883
-    networks:
-      - picarx
+    depends_on:
+      picarx-dt:
+        condition: service_healthy
 
   shadow-dt:
-    image: picarx/core:latest
+    image: abarbie/picarx:${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
-    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_core digitalshadow_dt.launch"
-    networks:
-      - picarx
+    command: /bin/bash -c "roslaunch arches_core digitalshadow_dt.launch"
+    depends_on:
+      picarx-dt:
+        condition: service_healthy
 
   mqtt-dt:
-    image: git.geomar.de:11411/open-source/arches/arches_mqtt_bridge:latest
+    image: abarbie/picarx/arches-mqtt-bridge:${TAG}
+    build:
+      dockerfile: Dockerfile-arches-mqtt-bridge
+      context: ./ros
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
-    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- roslaunch arches_mqtt_bridge dt_client.launch host:=mqtt-server"
-    networks:
-      - picarx
+    command: /bin/bash -c "roslaunch arches_mqtt_bridge dt_client.launch host:=mqtt-server"
+    depends_on:
+      picarx-dt:
+        condition: service_healthy
 
   ackermann_skill-dt:
-    build: ./ros/skills/ackermann_drive
-    image: picarx/skills/ackermann_drive:latest
+    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./ros/skills/ackermann_drive
+      args:
+        - TAG=${TAG}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
@@ -54,10 +68,11 @@ services:
       - /dev/i2c-0:/dev/i2c-0
       - ./core:/root/catkin_ws/src/core
       - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
-    command: /bin/bash -c "/root/catkin_ws/docker/wfi/wait-for-it-master/wait-for-it.sh $${ROS_MASTER_URI} -- 
+    command: /bin/bash -c "
       roslaunch picarx_ackermann_drive ackermann_skill.launch"
-    networks:
-      - picarx
+    depends_on:
+      picarx-dt:
+        condition: service_healthy
 
 networks:
   picarx:
