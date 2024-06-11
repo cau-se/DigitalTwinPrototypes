@@ -1,6 +1,6 @@
 ARG TAG=latest
-
-FROM ${TAG:+${TAG}/}ros:noetic as rosnoetic
+ARG ISLATEST=${TAG##latest}
+FROM ${ISLATEST:+${TAG}/}ros:noetic as rosnoetic
 WORKDIR /root/catkin_ws/
 RUN apt update -y \
     && apt-get install -y python3-pip python3-setuptools python3-catkin-tools wget unzip curl nano \

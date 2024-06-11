@@ -12,7 +12,8 @@ jobs:
     - name: Build with Docker Compose
       working-directory: ./PiCar-X
       run: |
-        TAG=arm64v8 docker compose -f docker-compose-core.yml build
+        TAG=arm64v8 docker compose -f docker-compose-core.yml build --no-cache
+        TAG=arm64v8 docker compose -f docker-compose-dtp.yml build --no-cache
 
 #    - name: Run pytest in Docker container
 #      run: |
@@ -25,4 +26,4 @@ jobs:
     - name: Push to Docker Hub
       working-directory: ./PiCar-X
       run: |
-        TAG=arm64v8 docker compose -f docker-compose-core.yml push
+        TAG=arm64v8 docker compose -f docker-compose-dtp.yml push
