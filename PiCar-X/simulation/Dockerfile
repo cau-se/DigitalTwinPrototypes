@@ -28,6 +28,8 @@ RUN /bin/bash -c "source /opt/ros/noetic/setup.sh && catkin build" \
     && echo "source ./install/setup.bash" >> /root/.bashrc
 ENTRYPOINT [ "/root/catkin_ws/src/arches/arches_core/ENTRYPOINT.sh" ]
 
+
+ARG TAG=latest
 FROM gazebo-only as tests
 COPY --from=picarx-core /root/catkin_ws .
 COPY . ./src/simulation
