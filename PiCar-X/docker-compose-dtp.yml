@@ -24,7 +24,7 @@ services:
         - TAG=${TAG:-latest}
         - ARCH=${ARCH:-}
       target: desktop
-    image: abarbie/picarx/picarx-gazebo:${TAG}
+    image: abarbie/picarx-gazebo:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     environment:
@@ -47,7 +47,7 @@ services:
       start_period: 1s
 
   picarx-gazebo-control:
-    image: abarbie/picarx/picarx-gazebo:${TAG}
+    image: abarbie/picarx-gazebo:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -71,7 +71,7 @@ services:
         condition: service_healthy
 
   mqtt-dtp:
-    image: abarbie/picarx/arches-mqtt-bridge:${TAG}
+    image: abarbie/picarx-arches-mqtt-bridge:${TAG}
     build:
       dockerfile: Dockerfile-arches-mqtt-bridge
       context: ./ros
@@ -87,7 +87,7 @@ services:
         condition: service_healthy
 
   motor_left-dtp:
-    image: abarbie/picarx/drivers/dcmotor:${TAG}
+    image: abarbie/picarx-dcmotor-driver:${TAG}
     build:
       dockerfile: Dockerfile
       context: ./ros/drivers/dcmotor/
@@ -109,7 +109,7 @@ services:
         condition: service_healthy
 
   motor_right-dtp:
-    image: abarbie/picarx/drivers/dcmotor:${TAG}
+    image: abarbie/picarx-dcmotor-driver:${TAG}
     tty: true
     env_file:
       - ./core/dtp/env/picarx.env
@@ -125,7 +125,7 @@ services:
         condition: service_healthy
 
   steering-dtp:
-    image: abarbie/picarx/drivers/clutchgear:${TAG}
+    image: abarbie/picarx-clutchgear-emulator:${TAG}
     build:
       dockerfile: Dockerfile
       context: ./ros/drivers/clutchgear
@@ -147,7 +147,7 @@ services:
         condition: service_healthy
 
   ackermann_skill-dtp:
-    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx-ackermann-skill:${TAG}
     build:
       dockerfile: Dockerfile
       context: ./ros/skills/ackermann_drive
@@ -170,7 +170,7 @@ services:
         condition: service_healthy
 
   motor_emulator_left-dtp:
-    image: abarbie/picarx/emulators/dcmotor:${TAG}
+    image: abarbie/picarx-dcmotor-emulator:${TAG}
     build:
       dockerfile: Dockerfile
       context: ./ros/emulators/dcmotor
@@ -192,7 +192,7 @@ services:
         condition: service_healthy
 
   motor_emulator_right-dtp:
-    image: abarbie/picarx/emulators/dcmotor:${TAG}
+    image: abarbie/picarx-dcmotor-emulator:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -209,7 +209,7 @@ services:
         condition: service_healthy
 
   steering_emulator-dtp:
-    image: abarbie/picarx/drivers/clutchgear:${TAG}
+    image: abarbie/picarx-clutchgear-emulator:${TAG}
     build:
       dockerfile: Dockerfile
       context: ./ros/emulators/clutchgear

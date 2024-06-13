@@ -38,7 +38,7 @@ services:
         condition: service_healthy
 
   mqtt-dt:
-    image: abarbie/picarx/arches-mqtt-bridge:${TAG}
+    image: abarbie/picarx-arches-mqtt-bridge:${TAG}
     build:
       dockerfile: Dockerfile-arches-mqtt-bridge
       context: ./ros
@@ -54,7 +54,7 @@ services:
         condition: service_healthy
 
   ackermann_skill-dt:
-    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx-ackermann-skill:${TAG}
     build:
       dockerfile: Dockerfile
       context: ./ros/skills/ackermann_drive
