@@ -1,6 +1,7 @@
 ARG TAG=latest
-ARG ISLATEST=${TAG##latest}
-FROM ${ISLATEST:+${TAG}/}ros:noetic as rosnoetic
+ARG ARCH=''
+
+FROM ${ARCH:+${ARCH}/}ros:noetic as rosnoetic
 WORKDIR /root/catkin_ws/
 RUN apt update -y \
     && apt-get install -y python3-pip python3-setuptools python3-catkin-tools wget unzip curl nano \
@@ -9,7 +10,6 @@ RUN apt update -y \
     && pip3 install --upgrade pip \
     && pip3 install pytest pytest-cov avro \
     && mkdir -p ./src/arches 
-
 
 FROM rosnoetic as adtf
 RUN wget -c https://git.geomar.de/open-source/arches/arches_msgs/-/archive/master/arches_msgs-master.tar.gz -O - | tar -xz \
@@ -20,12 +20,3 @@ RUN wget -c https://git.geomar.de/open-source/arches/arches_msgs/-/archive/maste
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin config --isolate-devel --install && catkin build" \
     && touch /root/.bashrc \
     && echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
-
-FROM adtf
-ENV ASSET_NAME ''
-
-COPY ./core ./src/core
-COPY ./ros/picarx_msgs ./src/picarx_msgs
-RUN pip3 install -e ./src/core/picarx \
-    && /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin build"
-ENTRYPOINT [ "/root/catkin_ws/src/arches/arches_core/ENTRYPOINT.sh" ]

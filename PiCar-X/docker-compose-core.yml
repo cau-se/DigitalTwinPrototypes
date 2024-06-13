@@ -4,8 +4,9 @@ services:
       dockerfile: Dockerfile
       context: .
       args:
-        - TAG=${TAG}
-    image: abarbie/picarx:${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
+    image: abarbie/picarx:${TAG:-latest}
 
 networks:
   default:

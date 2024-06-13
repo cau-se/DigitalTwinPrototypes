@@ -1,7 +1,7 @@
 services:
   picarx-dt:
     build: .
-    image: abarbie/picarx:${TAG}
+    image: abarbie/picarx:${TAG:-latest}
     environment:
       - ROS_HOSTNAME=picarx-dt
       - ROS_MASTER_URI=http://picarx-dt:11313
@@ -51,7 +51,7 @@ services:
         condition: service_healthy
 
   shadow-dt:
-    image: abarbie/picarx:${TAG}
+    image: abarbie/picarx:${TAG:-latest}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
@@ -66,7 +66,8 @@ services:
       dockerfile: Dockerfile-arches-mqtt-bridge
       context: ./ros
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     command: /bin/bash -c "roslaunch arches_mqtt_bridge pt_client.launch host:=mqtt-server"
@@ -80,7 +81,8 @@ services:
       dockerfile: Dockerfile
       context: ./ros/skills/ackermann_drive
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true

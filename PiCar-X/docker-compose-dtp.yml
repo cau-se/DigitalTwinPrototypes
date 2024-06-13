@@ -1,9 +1,9 @@
 services:
-  picarx-ds:
-    image: abarbie/picarx:${TAG}
+  picarx:
+    image: abarbie/picarx:${TAG:-latest}
     environment:
-      - ROS_HOSTNAME=picarx-ds
-      - ROS_MASTER_URI=http://picarx-ds:11311
+      - ROS_HOSTNAME=picarx
+      - ROS_MASTER_URI=http://picarx:11311
       - ROS_HOST_PORT=11311
     tty: true
     ports:
@@ -20,9 +20,10 @@ services:
     build:
       context: ./simulation
       dockerfile: Dockerfile
-      target: desktop
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
+      target: desktop
     image: abarbie/picarx/picarx-gazebo:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
@@ -46,13 +47,13 @@ services:
       start_period: 1s
 
   shadow-dtp:
-    image: abarbie/picarx:${TAG}
+    image: abarbie/picarx:${TAG:-latest}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
     command: /bin/bash -c "roslaunch arches_core digitalshadow_pt.launch"
     depends_on:
-      picarx-ds:
+      picarx:
         condition: service_healthy
 
   mqtt-dtp:
@@ -61,13 +62,14 @@ services:
       dockerfile: Dockerfile-arches-mqtt-bridge
       context: ./ros
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
     command: /bin/bash -c "roslaunch arches_mqtt_bridge pt_client.launch host:=mqtt-server"
     depends_on:
-      picarx-ds:
+      picarx:
         condition: service_healthy
 
   motor_left-dtp:
@@ -76,7 +78,8 @@ services:
       dockerfile: Dockerfile
       context: ./ros/drivers/dcmotor/
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -88,7 +91,7 @@ services:
       - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_driver dcmotor_left.launch"
     depends_on:
-      picarx-ds:
+      picarx:
         condition: service_healthy
 
   motor_right-dtp:
@@ -104,7 +107,7 @@ services:
       - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_driver dcmotor_right.launch"
     depends_on:
-      picarx-ds:
+      picarx:
         condition: service_healthy
 
   steering-dtp:
@@ -113,7 +116,8 @@ services:
       dockerfile: Dockerfile
       context: ./ros/drivers/clutchgear
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -125,7 +129,7 @@ services:
       - ./ros/drivers/clutchgear:/root/catkin_ws/src/drivers/clutchgear
     command: /bin/bash -c "roslaunch picarx_clutchgear_driver ackermann_clutchgear_driver.launch"
     depends_on:
-      picarx-ds:
+      picarx:
         condition: service_healthy
 
   ackermann_skill-dtp:
@@ -134,7 +138,8 @@ services:
       dockerfile: Dockerfile
       context: ./ros/skills/ackermann_drive
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -147,7 +152,7 @@ services:
     command: /bin/bash -c "
       roslaunch picarx_ackermann_drive ackermann_skill.launch"
     depends_on:
-      picarx-ds:
+      picarx:
         condition: service_healthy
 
   motor_emulator_left-dtp:
@@ -156,7 +161,8 @@ services:
       dockerfile: Dockerfile
       context: ./ros/emulators/dcmotor
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -194,7 +200,8 @@ services:
       dockerfile: Dockerfile
       context: ./ros/emulators/clutchgear
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
