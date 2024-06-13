@@ -1,6 +1,6 @@
 ARG TAG=latest
 
-FROM abarbie/picarx:${TAG:-latest}
+FROM abarbie/picarx:${TAG}
 
 COPY . ./src/emulators/dcmotor
 
