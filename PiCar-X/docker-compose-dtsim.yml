@@ -31,6 +31,8 @@ services:
       context: Dockerfile
       dockerfile: ./simulation
       target: desktop
+      args:
+        - TAG=${TAG:-latest}
     env_file:
       - ./core/dtp/env/simulation.env
     environment:
@@ -65,7 +67,7 @@ services:
       context: ./ros
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -80,7 +82,7 @@ services:
       context: ./ros/drivers/dcmotor/
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     image: abarbie/picarx/drivers/dcmotor:${TAG}
     env_file:
       - ./core/dtp/env/picarx.env
@@ -119,7 +121,7 @@ services:
       context: ./ros/drivers/clutchgear
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -141,7 +143,7 @@ services:
       context: ./ros/skills/ackermann_drive
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -163,7 +165,7 @@ services:
       context: ./ros/emulators/dcmotor
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
@@ -201,7 +203,7 @@ services:
       context: ./ros/emulators/clutchgear
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true

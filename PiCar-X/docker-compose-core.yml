@@ -5,7 +5,7 @@ services:
       context: .
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     image: abarbie/picarx:${TAG:-latest}
 
 networks:

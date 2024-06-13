@@ -34,6 +34,8 @@ services:
       context: Dockerfile
       dockerfile: ./simulation
       target: desktop
+      args:
+        - TAG=${TAG:-latest}
     image: abarbie/picarx/picarx-gazebo:${TAG}
     env_file:
       - ./core/dtp/env/simulation.env
@@ -67,7 +69,7 @@ services:
       context: ./ros
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     command: /bin/bash -c "roslaunch arches_mqtt_bridge pt_client.launch host:=mqtt-server"
@@ -82,7 +84,7 @@ services:
       context: ./ros/skills/ackermann_drive
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true

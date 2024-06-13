@@ -1,6 +1,6 @@
 ARG TAG=latest
 
-FROM abarbie/picarx:${TAG:-latest}
+FROM abarbie/picarx:${TAG}
 
 RUN wget -c https://git.geomar.de/open-source/arches/arches_mqtt_bridge/-/archive/main/arches_mqtt_bridge-main.tar.gz -O - | tar -xz \
     && mv arches_mqtt_bridge-main ./src/arches/arches_mqtt_bridge \

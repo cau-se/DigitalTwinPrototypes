@@ -44,7 +44,7 @@ services:
       context: ./ros
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
@@ -60,7 +60,7 @@ services:
       context: ./ros/skills/ackermann_drive
       args:
         - TAG=${TAG:-latest}
-        - ARCH=${ARCH}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
