@@ -1,6 +1,6 @@
 ARG TAG=latest
 
-FROM abarbie/picarx:${TAG}
+FROM abarbie/picarx:${TAG:-latest}
 
 COPY . ./src/skills/ackermann_drive
 
