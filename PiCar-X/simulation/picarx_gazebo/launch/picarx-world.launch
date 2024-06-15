@@ -10,10 +10,9 @@
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find picarx_gazebo)/worlds/picarx.world"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
         <arg name="debug" value="$(arg debug)" />
-        <arg name="gui" value="$(arg gui)" />
+        <arg name="gui" value="$(eval not arg('headless'))" />
         <arg name="paused" value="$(arg paused)"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-        <arg name="headless" value="$(arg headless)"/>
     </include>
     
     <param name="robot_description" command="xacro '$(find picarx_description)/urdf/picarx/picarx.urdf'" />

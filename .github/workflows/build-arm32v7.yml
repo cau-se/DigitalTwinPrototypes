@@ -1,0 +1,29 @@
+name: PiCar-X Main Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: [self-hosted, Linux, ARM32]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build with Docker Compose
+      working-directory: ./PiCar-X
+      run: |
+        TAG=latest-arm32v7 ARCH=arm32v7 docker compose -f docker-compose-core.yml build --no-cache
+        TAG=latest-arm32v7 docker compose -f docker-compose-dtp.yml build --no-cache
+
+    - name: Run pytest in Docker container
+      run: |
+        docker run --rm -name picarx-unittest abarbie/picarx:latest-arm32v7 pytest ./src/core/picarx/tests
+
+    - name: Start roslaunch in Docker container
+      run: |
+        docker run --rm --name dcmotor-integration-test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-11:/dev/i2c-11 --privileged  abarbie/picarx-dcmotor-driver:1.0.0-arm32v7 rostest picarx_dcmotor_driver integration_tests.test i2c_port:=/dev/i2c-11 
+
+    - name: Push to Docker Hub
+      working-directory: ./PiCar-X
+      run: |
+        TAG=latest-arm32v7 docker compose -f docker-compose-dtp.yml push

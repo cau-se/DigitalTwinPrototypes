@@ -67,7 +67,7 @@ services:
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - /dev/i2c-11:/dev/i2c-11
       - ./core:/root/catkin_ws/src/core
       - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
     command: /bin/bash -c "

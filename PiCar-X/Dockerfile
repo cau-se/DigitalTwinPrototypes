@@ -7,7 +7,6 @@ RUN apt update -y \
     && apt-get install -y python3-pip python3-setuptools python3-catkin-tools wget unzip curl nano \
     && apt-get clean \
     && update-ca-certificates -f \
-    && pip3 install --upgrade pip \
     && pip3 install pytest pytest-cov avro \
     && mkdir -p ./src/arches 
 
@@ -19,6 +18,7 @@ RUN wget -c https://git.geomar.de/open-source/arches/arches_msgs/-/archive/maste
 COPY ./core ./src/core
 COPY ./ros/picarx_msgs ./src/picarx_msgs
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin config --isolate-devel --install && catkin build" \
+    && pip3 install -e ./src/core/picarx \
     && touch /root/.bashrc \
     && echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc \
     && echo "source ./install/setup.bash" >> /root/.bashrc
