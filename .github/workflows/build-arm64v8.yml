@@ -17,7 +17,7 @@ jobs:
 
     - name: Run pytest in Docker container
       run: |
-        docker run --rm -name picarx-unittest abarbie/picarx:latest-arm64v8 pytest ./src/core/picarx/tests
+        docker run --rm --name picarx-unittest abarbie/picarx:latest-arm64v8 pytest ./src/core/picarx/tests
 
     - name: Start roslaunch in Docker container
       run: |
