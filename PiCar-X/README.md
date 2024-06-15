@@ -66,11 +66,11 @@ in their <em>tests</em> folders.
 
 ```console
 # CLUTCHGEAR DRIVER (Steering)
-docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged -it picarx/drivers/clutchgear:latest /bin/bash -c "source ./devel/picarx_clutchgear_driver/setup.bash 
+docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged -it abarbie/picarx-clutchgear-emulator:${TAG} /bin/bash -c "source ./devel/picarx_clutchgear_driver/setup.bash 
 && rostest picarx_clutchgear_driver integration_tests.test"" 
 
 # DC MOTOR DRIVER
-docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged -it picarx/drivers/dcmotor:latest /bin/bash -c "source ./devel/picarx_dcmotor_driver/setup.bash && rostest picarx_dcmotor_driver integration_tests.test"
+docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged -it abarbie/picarx-dcmotor-driver:${TAG} /bin/bash -c "source ./devel/picarx_dcmotor_driver/setup.bash && rostest picarx_dcmotor_driver integration_tests.test"
 ```
 
 # Build new Windows WSL2 Kernel
