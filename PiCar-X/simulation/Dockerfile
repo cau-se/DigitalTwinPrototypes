@@ -11,7 +11,7 @@ FROM gazebo:libgazebo9-bionic as gazebo-only
 ARG TAG
 WORKDIR /root/catkin_ws
 RUN apt-get update \
-    && apt-get install -y python3-pip python3-setuptools python3-yaml ros-noetic-ros-control ros-noetic-ros-controllers python3-catkin-tools curl \
+    && apt-get install -y python3-pip python3-setuptools python3-yaml ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control ros-noetic-ros-control ros-noetic-ros-controllers python3-catkin-tools curl \
     && apt-get clean \
     && update-ca-certificates -f
 
