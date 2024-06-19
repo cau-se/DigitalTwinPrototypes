@@ -90,7 +90,7 @@ services:
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-11:/dev/i2c-11
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_driver dcmotor_left.launch"
@@ -106,7 +106,7 @@ services:
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-11:/dev/i2c-11
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_driver dcmotor_right.launch"
@@ -128,7 +128,7 @@ services:
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-11:/dev/i2c-11
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/clutchgear:/root/catkin_ws/src/drivers/clutchgear
     command: /bin/bash -c "roslaunch picarx_clutchgear_driver ackermann_clutchgear_driver.launch"
@@ -150,7 +150,7 @@ services:
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-11:/dev/i2c-11
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
     command: /bin/bash -c "roslaunch picarx_ackermann_drive ackermann_skill.launch"
@@ -172,7 +172,7 @@ services:
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-11:/dev/i2c-11
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/dcmotor:/root/catkin_ws/src/emulators/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_emulator dcmotor_emulator_left.launch"
@@ -188,7 +188,7 @@ services:
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-11:/dev/i2c-11
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/dcmotor:/root/catkin_ws/src/emulators/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_emulator dcmotor_emulator_right.launch"
@@ -210,7 +210,7 @@ services:
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-11:/dev/i2c-11
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/clutchgear:/root/catkin_ws/src/emulators/clutchgear
     command: /bin/bash -c "roslaunch picarx_clutchgear_emulator ackermann_clutchgear_emulator.launch"

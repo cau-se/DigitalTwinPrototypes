@@ -50,9 +50,9 @@ class Test_Speed(unittest.TestCase):
         left_wheel_start_position = self.inital_message.pose[left_wheel_start_index]
         right_wheel_stop_position = self.final_message.pose[right_wheel_stop_index]
         left_wheel_stop_position = self.final_message.pose[left_wheel_stop_index]
-
-        self.assertAlmostEqual(right_wheel_start_position.position.x + 1, right_wheel_stop_position.position.x, delta=0.1)
-        self.assertAlmostEqual(left_wheel_start_position.position.x + 1, left_wheel_stop_position.position.x, delta=0.1)
+        rospy.loginfo(right_wheel_start_position)
+        self.assertAlmostEqual(right_wheel_start_position.position.x + 1, right_wheel_stop_position.position.x, delta=0.03)
+        self.assertAlmostEqual(left_wheel_start_position.position.x + 1, left_wheel_stop_position.position.x, delta=0.03)
 
 
 if __name__ == '__main__':

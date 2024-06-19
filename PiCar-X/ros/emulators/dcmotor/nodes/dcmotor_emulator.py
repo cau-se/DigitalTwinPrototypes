@@ -51,7 +51,7 @@ class DCMotorEmulator(AbstractMotorEmulator):
         self.frequency = 50
         self.pulse_width = 0
         self.controller_publisher = None
-        self.velocity = 23
+        self.velocity = 21
 
     @property
     def controller_publisher(self):

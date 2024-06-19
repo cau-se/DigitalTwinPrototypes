@@ -42,7 +42,7 @@ class AckermannDriveDSNode(object):
         self.motor_right_publisher = None
         self.left_steer = None
         self.right_steer = None
-        self.velocity = 30
+        self.velocity = 15
         self.wheel_base = None
         self.wheel_track = None
         self.DEFAULT_PERIOD = 4095
