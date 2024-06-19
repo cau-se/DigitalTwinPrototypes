@@ -20,6 +20,7 @@ jobs:
 
   unit-tests:
     runs-on: [self-hosted, Linux, ARM64]
+    needs: [build]
     steps:
     - uses: actions/checkout@v4
     - name: Run pytest in Docker container
@@ -29,6 +30,7 @@ jobs:
 
   integration-tests:
     runs-on: [self-hosted, Linux, ARM64]
+    needs: [unit-tests]
     steps:
     - uses: actions/checkout@v4
     - name: Start roslaunch in Docker container
@@ -38,8 +40,10 @@ jobs:
 
   release:
     runs-on: [self-hosted, Linux, X64]
+    needs: [integration-tests]
     steps:
     - uses: actions/checkout@v4
     - name: Push to Docker Hub
+      working-directory: ./PiCar-X
       run: |
         TAG=latest-arm64v8 docker compose -f docker-compose-dtp-no-gazebo.yml push
