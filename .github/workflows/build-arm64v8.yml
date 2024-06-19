@@ -7,8 +7,7 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64]
 
     steps:
-    - uses: actions/checkout@v2
-
+    - uses: actions/checkout@v4
     - name: build core container
       working-directory: ./PiCar-X
       run: |
@@ -22,7 +21,7 @@ jobs:
   unit-tests:
     runs-on: [self-hosted, Linux, ARM64]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Run pytest in Docker container
       working-directory: ./PiCar-X
       run: |
@@ -31,7 +30,7 @@ jobs:
   integration-tests:
     runs-on: [self-hosted, Linux, ARM64]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Start roslaunch in Docker container
       working-directory: ./PiCar-X
       run: |
@@ -40,7 +39,7 @@ jobs:
   release:
     runs-on: [self-hosted, Linux, X64]
     steps:
+    - uses: actions/checkout@v4
     - name: Push to Docker Hub
-      working-directory: ./PiCar-X
       run: |
         TAG=latest-arm64v8 docker compose -f docker-compose-dtp-no-gazebo.yml push
