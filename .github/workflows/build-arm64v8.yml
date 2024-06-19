@@ -44,6 +44,5 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Push to Docker Hub
-      working-directory: ./PiCar-X
       run: |
         TAG=latest-arm64v8 docker compose -f docker-compose-dtp-no-gazebo.yml push
