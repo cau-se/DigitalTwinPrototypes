@@ -29,7 +29,7 @@ services:
     restart: on-failure
 
   mqtt-dtp:
-    image: abarbie/picarx-arches-mqtt-bridge:${TAG}
+    image: abarbie/picarx-arches-mqtt-bridge:${TAG:-latest}
     build:
       dockerfile: Dockerfile-arches-mqtt-bridge
       context: ./ros
@@ -52,7 +52,7 @@ services:
       args:
         - TAG=${TAG:-latest}
         - ARCH=${ARCH:-}
-    image: abarbie/picarx-dcmotor-driver:${TAG}
+    image: abarbie/picarx-dcmotor-driver:${TAG:-latest}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -70,7 +70,7 @@ services:
     restart: on-failure
 
   motor_right-dtp:
-    image: abarbie/picarx-dcmotor-driver:${TAG}
+    image: abarbie/picarx-dcmotor-driver:${TAG:-latest}
     tty: true
     env_file:
       - ./core/dtp/env/picarx.env
@@ -88,7 +88,7 @@ services:
     restart: on-failure
 
   steering-dtp:
-    image: abarbie/picarx-clutchgear-driver:${TAG}
+    image: abarbie/picarx-clutchgear-driver:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/drivers/clutchgear
@@ -112,7 +112,7 @@ services:
     restart: on-failure
 
   ackermann_skill-dtp:
-    image: abarbie/picarx-ackermann-skill:${TAG}
+    image: abarbie/picarx-ackermann-skill:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/skills/ackermann_drive
@@ -136,7 +136,7 @@ services:
     restart: on-failure
 
   motor_emulator_left-dtp:
-    image: abarbie/picarx-dcmotor-emulator:${TAG}
+    image: abarbie/picarx-dcmotor-emulator:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/emulators/dcmotor
@@ -157,7 +157,7 @@ services:
     restart: on-failure
 
   motor_emulator_right-dtp:
-    image: abarbie/picarx-dcmotor-emulator:${TAG}
+    image: abarbie/picarx-dcmotor-emulator:${TAG:-latest}
     env_file:
       - ./core/dtp/env/simulation-external.env
     tty: true
@@ -172,7 +172,7 @@ services:
     restart: on-failure
 
   steering_emulator-dtp:
-    image: abarbie/picarx-clutchgear-emulator:${TAG}
+    image: abarbie/picarx-clutchgear-emulator:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/emulators/clutchgear
