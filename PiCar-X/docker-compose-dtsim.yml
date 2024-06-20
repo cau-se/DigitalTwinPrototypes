@@ -11,7 +11,7 @@ services:
 
   picarx:
     build: .
-    image: abarbie/picarx:${TAG}
+    image: abarbie/picarx:${TAG:-latest}
     environment:
       - ROS_HOSTNAME=picarxs
     tty: true
@@ -26,11 +26,13 @@ services:
       start_period: 1s
 
   picarx-gazebo:
-    image: abarbie/picarx/picarx-gazebo:${TAG}
+    image: abarbie/picarx-gazebo:${TAG:-latest}
     build:
       context: Dockerfile
       dockerfile: ./simulation
       target: desktop
+      args:
+        - TAG=${TAG:-latest}
     env_file:
       - ./core/dtp/env/simulation.env
     environment:
@@ -49,7 +51,7 @@ services:
         condition: service_healthy
 
   shadow-dtp:
-    image: abarbie/picarx:${TAG}
+    image: abarbie/picarx:${TAG:-latest}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -59,12 +61,13 @@ services:
         condition: service_healthy
 
   mqtt-dtp:
-    image: abarbie/picarx/arches-mqtt-bridge:${TAG}
+    image: abarbie/picarx-arches-mqtt-bridge:${TAG:-latest}
     build:
       dockerfile: Dockerfile-arches-mqtt-bridge
       context: ./ros
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
@@ -78,15 +81,16 @@ services:
       dockerfile: Dockerfile
       context: ./ros/drivers/dcmotor/
       args:
-        - TAG=${TAG}
-    image: abarbie/picarx/drivers/dcmotor:${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
+    image: abarbie/picarx-dcmotor-driver:${TAG:-latest}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_driver dcmotor_left.launch"
@@ -95,14 +99,14 @@ services:
         condition: service_healthy
 
   motor_right-dtp:
-    image: abarbie/picarx/drivers/dcmotor:${TAG}
+    image: abarbie/picarx-dcmotor-driver:${TAG:-latest}
     tty: true
     env_file:
       - ./core/dtp/env/picarx.env
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/dcmotor:/root/catkin_ws/src/drivers/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_driver dcmotor_right.launch"
@@ -111,19 +115,20 @@ services:
         condition: service_healthy
 
   steering-dtp:
-    image: abarbie/picarx/drivers/clutchgear:${TAG}
+    image: abarbie/picarx-clutchgear-driver:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/drivers/clutchgear
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/drivers/clutchgear:/root/catkin_ws/src/drivers/clutchgear
     command: /bin/bash -c "roslaunch picarx_clutchgear_driver ackermann_clutchgear_driver.launch"
@@ -132,19 +137,20 @@ services:
         condition: service_healthy
 
   ackermann_skill-dtp:
-    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx-ackermann-skill:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/skills/ackermann_drive
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx.env
     tty: true
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
     command: /bin/bash -c "roslaunch picarx_ackermann_drive ackermann_skill.launch"
@@ -153,19 +159,20 @@ services:
         condition: service_healthy
 
   motor_emulator_left-dtp:
-    image: abarbie/picarx/emulators/dcmotor:${TAG}
+    image: abarbie/picarx-dcmotor-emulator:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/emulators/dcmotor
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/dcmotor:/root/catkin_ws/src/emulators/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_emulator dcmotor_emulator_left.launch"
@@ -174,14 +181,14 @@ services:
         condition: service_healthy
 
   motor_emulator_right-dtp:
-    image: abarbie/picarx/emulators/dcmotor:${TAG}
+    image: abarbie/picarx-dcmotor-emulator:${TAG:-latest}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/dcmotor:/root/catkin_ws/src/emulators/dcmotor
     command: /bin/bash -c "roslaunch picarx_dcmotor_emulator dcmotor_emulator_right.launch"
@@ -190,19 +197,20 @@ services:
         condition: service_healthy
 
   steering_emulator-dtp:
-    image: abarbie/picarx/emulators/clutchgear:${TAG}
+    image: abarbie/picarx-clutchgear-emulator:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/emulators/clutchgear
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/simulation.env
     tty: true
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/emulators/clutchgear:/root/catkin_ws/src/emulators/clutchgear
     command: /bin/bash -c "roslaunch picarx_clutchgear_emulator ackermann_clutchgear_emulator.launch"

@@ -3,7 +3,10 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-    image: abarbie/picarx:${TAG}
+      args:
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
+    image: abarbie/picarx:${TAG:-latest}
 
 networks:
   default:

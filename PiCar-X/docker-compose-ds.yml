@@ -1,7 +1,7 @@
 services:
   picarx-dt:
     build: .
-    image: abarbie/picarx:${TAG}
+    image: abarbie/picarx:${TAG:-latest}
     environment:
       - ROS_HOSTNAME=picarx-dt
       - ROS_MASTER_URI=http://picarx-dt:11313
@@ -34,7 +34,9 @@ services:
       context: Dockerfile
       dockerfile: ./simulation
       target: desktop
-    image: abarbie/picarx/picarx-gazebo:${TAG}
+      args:
+        - TAG=${TAG:-latest}
+    image: abarbie/picarx-gazebo:${TAG:-latest}
     env_file:
       - ./core/dtp/env/simulation.env
     environment:
@@ -51,7 +53,7 @@ services:
         condition: service_healthy
 
   shadow-dt:
-    image: abarbie/picarx:${TAG}
+    image: abarbie/picarx:${TAG:-latest}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
@@ -61,12 +63,13 @@ services:
         condition: service_healthy
 
   mqtt-dt:
-    image: abarbie/picarx/arches-mqtt-bridge:${TAG}
+    image: abarbie/picarx-arches-mqtt-bridge:${TAG:-latest}
     build:
       dockerfile: Dockerfile-arches-mqtt-bridge
       context: ./ros
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     command: /bin/bash -c "roslaunch arches_mqtt_bridge pt_client.launch host:=mqtt-server"
@@ -75,19 +78,20 @@ services:
         condition: service_healthy
 
   ackermann_skill-dt:
-    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx-ackermann-skill:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./ros/skills/ackermann_drive
       args:
-        - TAG=${TAG}
+        - TAG=${TAG:-latest}
+        - ARCH=${ARCH:-}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
     privileged: true
     volumes:
       - /sys/class/gpio:/sys/class/gpio
-      - /dev/i2c-0:/dev/i2c-0
+      - ${I2C:-/dev/i2c-0}:${I2C:-/dev/i2c-0}
       - ./core:/root/catkin_ws/src/core
       - ./ros/skills/ackermann_drive:/root/catkin_ws/src/skills/ackermann_drive
     command: /bin/bash -c "roslaunch picarx_ackermann_drive ackermann_skill.launch"
@@ -97,7 +101,7 @@ services:
 
   drive_monitor:
     build: ./ros/skills/ackermann_drive
-    image: abarbie/picarx/skills/ackermann_drive:${TAG}
+    image: abarbie/picarx-ackermann-skill:${TAG:-latest}
     env_file:
       - ./core/dtp/env/picarx-dt.env
     tty: true
