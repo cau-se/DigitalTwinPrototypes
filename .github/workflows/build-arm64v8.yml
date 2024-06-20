@@ -39,7 +39,7 @@ jobs:
         docker run --rm --name dcmotor-integration-test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-11:/dev/i2c-11 --privileged  abarbie/picarx-dcmotor-driver:latest-arm64v8 rostest picarx_dcmotor_driver integration_tests.test i2c_port:=/dev/i2c-11 
 
   release:
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: [self-hosted, Linux, ARM64]
     needs: [integration-tests]
     steps:
     - uses: actions/checkout@v4
