@@ -33,7 +33,7 @@ jobs:
     needs: [unit-tests]
     steps:
     - uses: actions/checkout@v4
-    - name: Start roslaunch in Docker container
+    - name: Integration Test dcmotor
       working-directory: ./PiCar-X
       run: |
         docker run --rm --name dcmotor-integration-test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-11:/dev/i2c-11 --privileged  abarbie/picarx-dcmotor-driver:latest-arm64v8 rostest picarx_dcmotor_driver integration_tests.test i2c_port:=/dev/i2c-11 
