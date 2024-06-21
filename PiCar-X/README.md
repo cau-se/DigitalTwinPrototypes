@@ -1,8 +1,13 @@
 # Digital Twin Prototype of a PiCar-X
-The goal of this project is to give an insight into practice and how the developed of IIoT applications changes.We demonstrate the basic idea of a Digital Twin (Prototype) by the example of a PiCar-X by Sunfounder.
-This project was implemented with via ROS packages, which can be connected to a Gazebo simulation.
+The goal of this project is to exemplify my research on digital twins. All concepts presented and formalized in the paper:
+
+**A. Barbie and W. Hasselbring. From Digital Twins to Digital Twin Prototypes: Concepts, Formalization, and Applications. IEEE Access, 12:75337–75365, 2024.** [![DOI:10.1109/access.2024.3406510](https://zenodo.org/badge/doi/10.1109/access.2024.3406510.svg)](https://doi.org/10.1109/access.2024.3406510)
+
+The basic ideas of a Digital Twin Prototype are implemented for a PiCar-X by Sunfounder. All modules are implemented using the middleware Robot Operating System (ROS). All nodes are encapsulated in Docker. The digital thread is realized using the ARCHES Digital Twin Framework (ADTF).
 
 <img style="display: block; margin: auto;" src="./docs/picarx-gazebo.gif" width="500" />
+
+**!!! This demo will not work on Ubuntu 24.04, since the character devices fully replace the sysfs GPIO functionallity.**
 
 # Activate GPIO and I2C on Your System
 This project based on ROS and Docker. Due to the used interfaces on the RPi, we have to use Linux Kernel functions for GPIO and I2C. Before you can start this project you have to activate GPIO and I2C. If you already activated these modules, you can proceed with ##. Otherwise you have to build these modules first.
@@ -10,35 +15,49 @@ This project based on ROS and Docker. Due to the used interfaces on the RPi, we 
 - [Install on Ubuntu 20.04](#build-new-linux-kernel)
 - [Install on Windows (with WSL2)](#build-new-windows-wsl2-kernel)
 
-<strong>If you are using this project with WSL2, you also have to [install and start the XLaunch](#xlaunch-for-windows). Otherwise you can start Gazebo with Docker.</strong>
+**If you are using this project with WSL2, you also have to [install and start the XLaunch](#xlaunch-for-windows). Otherwise you can start Gazebo with Docker.**
 
-If you already have built the modules, you can activate them via 
+If you already have built the modules, you can activate them via:
 ```console 
     sudo modprobe gpio-mockup gpio_mockup_ranges=1,41
     sudo modprobe i2c-dev
     sudo modprobe i2c-stub chip_addr=0x14
 ```
 
-# Start with Docker compose
-
-You can start the whole Digital Twin Prototype with the <em>docker-compose</em> file in this folder. We use a core container, where all other containers are built on. When you built the containers the first time, you have to build the core container first.
-
-```console
-
-    docker compose -f docker-compose-dtp.yml build picarx
-```
-
-Create a Docket network.
-
-```console
-    docker network create picarx
-```
-
-Afterwards, you can build all containers and start the Digital Twin Prototype when all containers are built.
-
+If you want to run the Digital Twin Prototype without the Gazebo Simulation on a RaspberryPi, you only need to active the I2C stub:
 ```console 
-    docker compose -f docker-compose-dtp.yml build
-    docker compose -f docker-compose-dtp.yml up
+    sudo modprobe i2c-stub chip_addr=0x14
+```
+
+# Start with Docker compose
+It is possible to run the DTP on a common x64 processcor architecture, but also ARM32v7 (RPI 3) and ARM 64 (RPI 4). Notice that you cannot run Gazebo on an ARM architecture.
+
+## On x64 Linux
+The default TAG is latest. If you want to change the docker container version, add the environment variable TAG infront of docker compose
+```console 
+    docker compose -f docker-compose-core.yml build --no-cache
+    docker compose -f docker-compose-dtp.yml build --no-cache
+```
+
+## On ARM32 Linux
+The RaspberryPi 3 needs to use the arm32v7 docker container. Use the ARCH environment variable to build on the correct base container.
+```console 
+    TAG=latest ARCH=arm32v7 docker compose -f docker-compose-core.yml build --no-cache
+    TAG=latest ARCH=arm32v7 docker compose -f docker-compose-dtp-no-gazebo.yml build --no-cache
+```
+
+## On ARM64 Linuy
+The RaspberryPi 4 needs to use the arm64v8 docker container. Use the ARCH environment variable to build on the correct base container.
+```console 
+    TAG=latest ARCH=arm64v8 docker compose -f docker-compose-core.yml build --no-cache
+    TAG=latest ARCH=arm64v8 docker compose -f docker-compose-dtp-no-gazebo.yml build --no-cache
+```
+
+## Build and start the Physical Twin on a RPI
+```console 
+    TAG=latest ARCH=<SELECT ARM VERSION> docker compose -f docker-compose-core.yml build --no-cache
+    TAG=latest ARCH=<SELECT ARM VERSION> docker compose -f docker-compose-pt.yml build --no-cache
+    TAG=latest ARCH=<SELECT ARM VERSION> docker compose -f docker-compose-pt.yml up -d
 ```
 
 ## Let the DTP drive
@@ -64,14 +83,24 @@ After you start all Docker containers, you can switch into one of the containers
 In this project we also demonstrate how to execute small integration tests with ROS and Docker. The drivers of the clutchgear and the DC Motor have integration tests
 in their <em>tests</em> folders.
 
-```console
-# CLUTCHGEAR DRIVER (Steering)
-docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged -it abarbie/picarx-clutchgear-emulator:${TAG} /bin/bash -c "source ./devel/picarx_clutchgear_driver/setup.bash 
-&& rostest picarx_clutchgear_driver integration_tests.test"" 
+**Replace the I2C devices with the device your created on your system.**
 
-# DC MOTOR DRIVER
-docker run --rm --name test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged -it abarbie/picarx-dcmotor-driver:${TAG} /bin/bash -c "source ./devel/picarx_dcmotor_driver/setup.bash && rostest picarx_dcmotor_driver integration_tests.test"
+## Integration Test for the DCMotor driver
+```console
+docker run --rm --name dcmotor-integration-test -v /sys/class/gpio:/sys/class/gpio -v /dev/i2c-0:/dev/i2c-0 --privileged  abarbie/picarx-dcmotor-driver:latest rostest picarx_dcmotor_driver integration_tests.test i2c_port:=/dev/i2c-0
 ```
+
+## Speed test with data from Gazebo in headless mode
+For this integration test, you have to first start the entire DTP with Gazebo in headless mode. Afterwards, you execute the test. Do not forget to shutdown all containers after the tests.
+```console
+i2c=/dev/i2c-0 docker compose -f docker-compose-dtp-inttest.yml up -d
+
+docker exec picar-x-picarx-gazebo-control-1 /bin/bash -c "source ./install/setup.bash && sleep 30; python3 ./src/simulation/picarx_control/tests/steering_integration_test.py"
+
+docker compose -f docker-compose-dtp-inttest.yml down
+```
+This test was also autoamted in the x64 Github Actions workflow.
+
 
 # Build new Windows WSL2 Kernel
 
@@ -121,7 +150,7 @@ wsl --shutdown
 ```
 
 Back on Windows you know have to copy the <em>bzImage</em> to the kernel folder <em>C:\Windows\System32\lxss\tools</em>
-Then rename the <em>kernel</em> file to <em>kernel.old</em>, <strong>do not delete it</strong>! If something went wrong, you can just restore the old working kernel. 
+Then rename the <em>kernel</em> file to <em>kernel.old</em>, **do not delete it**! If something went wrong, you can just restore the old working kernel. 
 
 After you copied the <em>bzImage</em> into the folder, rename <em>bzImage</em> to <em>kernel</em>. Afterwards, start Ubuntu again and go into the WSL2 Kernel folder from the privious steps and install the modules via:
 
@@ -223,7 +252,7 @@ Start the application with following configuration:
 
 # Troubleshooting
 
-<strong>Problem 1: /dev/I2C-X is busy:</strong>
+**Problem 1: /dev/I2C-X is busy:**
 
 If you started the Docker compose file before you activated I2C, than a folder named /dev/I2C-X was created on your system, due to the mounting of volumes.
 
@@ -235,7 +264,7 @@ sudo rm -r /dev/i2c-x
 
 And [activate I2C](#activate-gpio-and-i2c-on-your-system)
 
-<strong>Problem 2: GPIO ports exist after the containers crashed/were killed.</strong>
+**Problem 2: GPIO ports exist after the containers crashed/were killed.**
 
 If you use CTRL+C more than once, you kill the containers instead of stopping them. Although deleting the GPIO pins is part of the shutdown routine, this is skipped if the containers crash or get killed.
 
