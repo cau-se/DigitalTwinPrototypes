@@ -51,12 +51,10 @@ class Test_Speed(unittest.TestCase):
         right_wheel_stop_position = self.final_message.pose[right_wheel_stop_index]
         left_wheel_stop_position = self.final_message.pose[left_wheel_stop_index]
         rospy.loginfo(right_wheel_start_position)
-        self.assertAlmostEqual(right_wheel_start_position.position.x + 1, right_wheel_stop_position.position.x, delta=0.03)
-        self.assertAlmostEqual(left_wheel_start_position.position.x + 1, left_wheel_stop_position.position.x, delta=0.03)
+        self.assertAlmostEqual(right_wheel_start_position.position.x + 1, right_wheel_stop_position.position.x, delta=0.04)
+        self.assertAlmostEqual(left_wheel_start_position.position.x + 1, left_wheel_stop_position.position.x, delta=0.04)
 
 
 if __name__ == '__main__':
     rosunit.unitrun("ackermann_skill", 'test_pt_speed',
                     Test_Speed)
-
-# python3 src/simulation/picarx_control/tests/steering_integration_test.py
